@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">NantesTurfu</string>
+    <string name="bouttonPref">Réglages</string>
+    <string name="texte">Rechercher une station</string>
+    <string name="bouttonFav">Favoris</string>
+    <string name="bouttonMap">Carte</string>
+    <string name="bouttonRecherche">Rechercher</string>
+    <string name="title_activity_settings">Settings</string>
+</resources>

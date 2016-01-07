@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <item android:id="@+id/search"
+        android:title="@string/bouttonRecherche"
+        app:showAsAction="ifRoom"
+        android:actionViewClass="android.widget.SearchView" />
+    <item
+        android:id="@+id/favoris"
+        android:title="@string/bouttonFav"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/préférences"
+        android:title="@string/bouttonPref"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/carte"
+        android:title="@string/bouttonMap"
+        app:showAsAction="ifRoom"/>
+
+
+
+</menu>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="listeTitres">
+        <item>Carte</item>
+        <item>Favoris</item>
+    </string-array>
+    <string-array name="listeValeurs">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>

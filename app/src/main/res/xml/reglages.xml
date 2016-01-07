@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference android:title="Géolocalisation"
+        android:defaultValue="true"
+        android:summary="Voulez-vous activer la géolocalisation ?"
+        android:key="Géolocalisation" />
+    <ListPreference     android:title="Menu par défaut"
+        android:summary="Choisissez le menu qui s'ouvre par défaut au lancement de l'application"
+        android:key="Menu par défaut"
+        android:defaultValue="1"
+        android:entries="@array/listeTitres"
+        android:entryValues="@array/listeValeurs" />
+</PreferenceScreen>
