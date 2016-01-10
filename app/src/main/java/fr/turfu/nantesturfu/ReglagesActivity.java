@@ -29,7 +29,7 @@ public class ReglagesActivity extends PreferenceActivity {
 
         LinearLayout root = (LinearLayout)findViewById(android.R.id.list).getParent().getParent().getParent();
         Toolbar bar = (Toolbar) LayoutInflater.from(this).inflate(R.layout.reglages_toolbar, root, false);
-        root.addView(bar, 0); // insert on top
+        root.addView(bar, 0);
         bar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
