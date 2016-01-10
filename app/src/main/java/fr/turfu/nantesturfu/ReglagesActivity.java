@@ -15,6 +15,7 @@ public class ReglagesActivity extends PreferenceActivity {
 
         addPreferencesFromResource(R.xml.reglages);
         setContentView(R.layout.activity_reglages);
+        overridePendingTransition(0,0); //Permet de ne pas avoir d'animation à l'ouverture de l'activité
 
     }
     //Code recopié (la classe PreferenceActivity gère très mal les toolbars, c'est une solution "bricolage", qui utilise une autre toolbar : "toolbar_simplifiee")

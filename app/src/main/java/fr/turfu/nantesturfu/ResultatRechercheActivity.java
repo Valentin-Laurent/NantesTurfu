@@ -20,6 +20,7 @@ public class ResultatRechercheActivity extends ListActivity {
 
         //On récupère l'intent généré par la recherche
         Intent i = getIntent();
+        overridePendingTransition(0,0); //Permet de ne pas avoir d'animation à l'ouverture de l'activité
         if (Intent.ACTION_SEARCH.equals(i.getAction())) {
             recherche = i.getStringExtra(SearchManager.QUERY);
         }
@@ -41,5 +42,11 @@ public class ResultatRechercheActivity extends ListActivity {
         });
         //On set le titre qui sera affiché dans la toolbar
         bar.setTitle("Recherche pour : "+recherche);
+    }
+
+    //Permet de ne pas avoir d'animation à la fermeture de l'activité
+    @Override public void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
     }
 }

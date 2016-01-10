@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.préférences:
                 Intent intent = new Intent(this, ReglagesActivity.class);
                 startActivity(intent);
-                overridePendingTransition(0,0); //Permet de ne pas avoir d'animation à l'ouverture de l'activité
                 return true;
 
             case R.id.favoris:
