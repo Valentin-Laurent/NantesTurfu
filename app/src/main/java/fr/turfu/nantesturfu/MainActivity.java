@@ -1,6 +1,5 @@
 package fr.turfu.nantesturfu;
 
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         menu.setDisplayShowTitleEnabled(false);
 
         //test d'appel à l'API
-        new CallAPI().execute("https://api.jcdecaux.com/vls/v1/stations/10042?contract=paris&apiKey=1585b03813a6d3d94529262d9a01b8ba02a33ecb");
+        //new CallAPI().execute("https://api.jcdecaux.com/vls/v1/stations/10042?contract=paris&apiKey=1585b03813a6d3d94529262d9a01b8ba02a33ecb");
 
     }
 
