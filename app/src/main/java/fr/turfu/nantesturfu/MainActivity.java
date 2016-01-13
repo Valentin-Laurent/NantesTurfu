@@ -19,6 +19,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+//Map : un click refresh le bordel, un clic long : lance l'activité "DétailActivity" (Flox)
+//Map : rajouter la barre de menu (Val)
+//Faire l'activité DétailActivity
+//Faire l'activité Favoris (notamment regarder la meilleure façon de stocker les favoris)
+//Scraper les stations de la TAN
+//Faire un parser pour TAN et Bicloo
+//Utiliser le réglage pour le choix de l'activité lancée en premier (carte ou favoris)
+
 
 public class MainActivity extends AppCompatActivity {
 
