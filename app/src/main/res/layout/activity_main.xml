@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:inputType="textNoSuggestions"
             android:lines="1"
-            android:hint="@string/texte" />
+            android:hint="@string/rien" />
 
     </RelativeLayout>
 

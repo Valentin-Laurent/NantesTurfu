@@ -6,4 +6,5 @@
     <string name="bouttonMap">Carte</string>
     <string name="bouttonRecherche">Rechercher</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="rien">Petit test</string>
 </resources>

@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -23,17 +22,6 @@ import java.net.URL;
 
 
 public class MainActivity extends AppCompatActivity {
-    Button b;
-
-    /*private View.OnClickListener imcListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View vue) {
-            double p = Double.parseDouble((((TextView) findViewById(R.id.Poids)).getText()).toString());
-            double t = Double.parseDouble((((TextView) findViewById(R.id.Taille)).getText()).toString());
-            TextView resultat = (TextView) findViewById(R.id.Resultat);
-            resultat.setText(Double.toString(p/(Math.pow(t,2))));
-        }
-    };*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         menu.setDisplayShowTitleEnabled(false);
 
-
-        // b = (Button) findViewById(R.id.BouttonIMC);
-        //b.setOnClickListener(imcListener);
+        //test d'appel à l'API
         new CallAPI().execute("https://api.jcdecaux.com/vls/v1/stations/10042?contract=paris&apiKey=1585b03813a6d3d94529262d9a01b8ba02a33ecb");
 
     }
