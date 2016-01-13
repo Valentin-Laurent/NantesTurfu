@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.carte:
+                Intent intent2 = new Intent(this, MapActivity.class);
+                startActivity(intent2);
                 return true;
 
             default:
