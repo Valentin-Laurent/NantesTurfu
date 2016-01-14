@@ -74,20 +74,13 @@ public class MapActivity extends AppCompatActivity {
         myMapController = (MapController) myOpenMapView.getController();
         myMapController.setZoom(15);
 
-// GET THE MARKERS IN SCREEN AREA =================== THIS SHIT WONT WORK :(:(:(:(:(:(:(:(
-   /*    IGeoPoint ct = myOpenMapView.getMapCenter();
-        float res[]= new float[]{0};
-        IGeoPoint ct2= new GeoPoint(47.237358, -1.545327);
-        IGeoPoint monpt= new GeoPoint(47.237212, -1.547687);
-        Location.distanceBetween(ct2.getLatitude(), ct2.getLatitude(), monpt.getLatitude(), monpt.getLongitude(), res);
-        float disp=res[0];
-        String d = Float.toString(disp);
-*/
         //--- Create Overlay
         overlayItemArray = new ArrayList<OverlayItem>();
 // Il serait pratique d'utiliser un custom resource proxy, mais c'est galere
         DefaultResourceProxyImpl defaultResourceProxyImpl
                 = new DefaultResourceProxyImpl(this);
+
+        
         // AJOUTER LE POINT BLEU !
         MyItemizedIconOverlay myItemizedIconOverlay
                 = new MyItemizedIconOverlay(
