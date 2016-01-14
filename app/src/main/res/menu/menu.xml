@@ -22,6 +22,4 @@
         android:title="@string/bouttonMap"
         app:showAsAction="ifRoom"/>
 
-
-
 </menu>

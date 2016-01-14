@@ -36,26 +36,27 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        //On gère la toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         ActionBar menu = getSupportActionBar();
-
-        menu.setDisplayShowTitleEnabled(false);
+        menu.setDisplayShowTitleEnabled(false); //On n'affiche pas le titre de l'appli
 
         //test d'appel à l'API
         //new CallAPI().execute("https://api.jcdecaux.com/vls/v1/stations/10042?contract=paris&apiKey=1585b03813a6d3d94529262d9a01b8ba02a33ecb");
 
     }
 
-    //La méthode suivante permet d'inflater le fichier menu.xml
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         super.onCreateOptionsMenu(menu);
+
+        //On sérialise le fichier menu.xml pour l'afficher dans la barre de menu
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
 
-        // Associate searchable configuration with the SearchView
+        // Ici on gère le fait qu'on pourra lancer une recherche depuis cette activité
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //Méthode pour gérer le clic sur les bouttons du menu (sauf la recherche qui est gérée directement par le search manager
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -72,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.favoris:
-                return true;
-
-            case R.id.search:
                 return true;
 
             case R.id.carte:
@@ -87,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
     //Classe qui permet d'effectuer la requete GET hors du thread UI
     private class CallAPI extends AsyncTask<String, String, String> {
 

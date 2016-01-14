@@ -18,7 +18,9 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,11 +34,18 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-public class MapActivity extends Activity {
+public class MapActivity extends AppCompatActivity {
 
     private MapView myOpenMapView;
     private MapController myMapController;
@@ -50,6 +59,14 @@ public class MapActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        //On gère la toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar menu = getSupportActionBar();
+        menu.setDisplayShowTitleEnabled(false); //On n'affiche pas le titre de l'appli
+
+
         myOpenMapView = (MapView) findViewById(R.id.openmapview);
         //Activer le zoom et le tactile
         myOpenMapView.setBuiltInZoomControls(true);
@@ -227,6 +244,40 @@ public class MapActivity extends Activity {
             return;
         }
         locationManager.removeUpdates(myLocationListener);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+
+        //On sérialise le fichier menu.xml pour l'afficher dans la barre de menu
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+
+        // Ici on gère le fait qu'on pourra lancer une recherche depuis cette activité
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
+    }
+
+    //Méthode pour gérer le clic sur les bouttons du menu (sauf la recherche qui est gérée directement par le search manager
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.préférences:
+                Intent intent = new Intent(this, ReglagesActivity.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.favoris:
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void updateLoc(Location loc){
