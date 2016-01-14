@@ -13,13 +13,13 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/préférences"
-        android:title="@string/bouttonPref"
+        android:id="@+id/carte"
+        android:title="@string/bouttonMap"
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/carte"
-        android:title="@string/bouttonMap"
+        android:id="@+id/préférences"
+        android:title="@string/bouttonPref"
         app:showAsAction="ifRoom"/>
 
 </menu>
