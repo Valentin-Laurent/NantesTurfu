@@ -79,8 +79,6 @@ public class MapActivity extends AppCompatActivity {
 // Il serait pratique d'utiliser un custom resource proxy, mais c'est galere
         DefaultResourceProxyImpl defaultResourceProxyImpl
                 = new DefaultResourceProxyImpl(this);
-
-        ²
         // AJOUTER LE POINT BLEU !
         MyItemizedIconOverlay myItemizedIconOverlay
                 = new MyItemizedIconOverlay(
@@ -127,8 +125,8 @@ public class MapActivity extends AppCompatActivity {
         // on crée chaque element i
         OverlayItem i1 =new OverlayItem("C'est la tan !", "coucou", new GeoPoint(47.22, -1.55));
         // On crée un item i2 a partir d'un element de la classe Station
-        GeoPoint g=new GeoPoint(47.215, -1.55);
-        Station s=new TStation(g);
+        GeoPoint ghb=new GeoPoint(47.215, -1.55);
+        Station s=new TStation(ghb);
         // on génere i2 à partir de s
         //OverlayItem i2 =new OverlayItem(s.nom, s.toString(), s.pos);
         OverlayItem i2 =new OverlayItem("Good","Morning", s.pos);
