@@ -88,6 +88,39 @@ public class MapActivity extends AppCompatActivity {
         myOpenMapView.getOverlays().add(myItemizedIconOverlay);
         //---
 
+
+        // TEST FULL LAYERS ==================================================================
+        double abs,ord;
+        GeoPoint g;
+        int orang=Color.rgb(245,180,0);
+        Drawable icon = this.getResources().getDrawable(R.drawable.bic);
+        for (int k=0;k<100;k++) {
+            ArrayList<OverlayItem> overit = new ArrayList<>();
+            abs = Math.random() / 10 + 47.2;
+            ord = Math.random() / 10 - 1.56;
+            g = new GeoPoint(abs, ord);
+            OverlayItem it = new OverlayItem("item numero" + Integer.toString(k), "blabla", g);
+            it.setMarker(icon);
+            overit.add(it);
+            ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(overit, icon, icon, orang,
+                    new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                        @Override
+                        public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                            //do something
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onItemLongPress(final int index, final OverlayItem item) {
+                            return false;
+                        }
+                    }, defaultResourceProxyImpl);
+            mOverlay.setFocusedItem(0);
+
+            myOpenMapView.getOverlays().add(mOverlay);
+        }
+// =========== FIN FULL LAYERS
+
         // AJOUTER TOUTES LES ICONES de la TAN  ====================================================
         // Liste des icones
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
