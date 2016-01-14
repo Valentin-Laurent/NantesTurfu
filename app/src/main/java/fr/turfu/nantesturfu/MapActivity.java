@@ -80,7 +80,7 @@ public class MapActivity extends AppCompatActivity {
         DefaultResourceProxyImpl defaultResourceProxyImpl
                 = new DefaultResourceProxyImpl(this);
 
-        
+        ²
         // AJOUTER LE POINT BLEU !
         MyItemizedIconOverlay myItemizedIconOverlay
                 = new MyItemizedIconOverlay(
