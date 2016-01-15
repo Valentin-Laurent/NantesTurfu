@@ -296,6 +296,8 @@ public class MapActivity extends AppCompatActivity {
                 return true;
 
             case R.id.favoris:
+                Intent intent2 = new Intent(this, MainActivity.class);
+                startActivity(intent2);
                 return true;
 
             default:
