@@ -153,7 +153,6 @@ public class MapActivity extends AppCompatActivity {
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        // CHARGER LES JHORAIRES DE LA TAN DANS LACTIVITE BANDEAU EN HAUT ?
                         return false;
                     }
                     @Override
