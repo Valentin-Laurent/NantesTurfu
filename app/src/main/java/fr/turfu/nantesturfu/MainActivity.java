@@ -20,9 +20,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 //Map : un click refresh le bordel, un clic long : lance l'activité "DétailActivity" (Flox)
-//Map : cosmétique (à la fin si on a la temps) : harmoniser les barres de menu, faire un bel affichage du menu sur smartphone
+//Map : cosmétique (à la fin si on a la temps) : harmoniser les barres de menu
 //Faire l'activité DétailActivity
-//Faire l'activité Favoris (notamment regarder la meilleure façon de stocker les favoris)
+//Faire l'activité Favoris : c'est la MainActivity. On va utiliser tinyDB couplée à un SimpleAdapter pour les afficher (voir tuto OpenClassroom + doc tinyDB)
 //Scraper les stations de la TAN
 //Faire un parser pour TAN et Bicloo
 //Utiliser le réglage pour le choix de l'activité lancée en premier (carte ou favoris)
