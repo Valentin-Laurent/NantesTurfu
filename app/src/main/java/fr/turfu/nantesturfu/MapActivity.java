@@ -80,6 +80,7 @@ public class MapActivity extends AppCompatActivity {
 // Il serait pratique d'utiliser un custom resource proxy, mais c'est galere
         DefaultResourceProxyImpl defaultResourceProxyImpl
                 = new DefaultResourceProxyImpl(this);
+
         // AJOUTER LE POINT BLEU !
         MyItemizedIconOverlay myItemizedIconOverlay
                 = new MyItemizedIconOverlay(
