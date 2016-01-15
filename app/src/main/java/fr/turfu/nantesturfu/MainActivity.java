@@ -20,7 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 //Map : un click refresh le bordel, un clic long : lance l'activité "DétailActivity" (Flox)
-//Map : rajouter la barre de menu (Val)
+//Map : cosmétique (à la fin si on a la temps) : harmoniser les barres de menu, faire un bel affichage du menu sur smartphone
 //Faire l'activité DétailActivity
 //Faire l'activité Favoris (notamment regarder la meilleure façon de stocker les favoris)
 //Scraper les stations de la TAN
@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar menu = getSupportActionBar();
         menu.setDisplayShowTitleEnabled(false); //On n'affiche pas le titre de l'appli
+        toolbar.setTitle("Favoris");//On affiche par contre le titre de l'activité
+
 
         //test d'appel à l'API
         //new CallAPI().execute("https://api.jcdecaux.com/vls/v1/stations/10042?contract=paris&apiKey=1585b03813a6d3d94529262d9a01b8ba02a33ecb");
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         //On sérialise le fichier menu.xml pour l'afficher dans la barre de menu
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_favoris, menu);
 
         // Ici on gère le fait qu'on pourra lancer une recherche depuis cette activité
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);

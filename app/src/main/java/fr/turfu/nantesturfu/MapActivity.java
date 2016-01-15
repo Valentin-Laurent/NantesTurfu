@@ -65,7 +65,7 @@ public class MapActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar menu = getSupportActionBar();
         menu.setDisplayShowTitleEnabled(false); //On n'affiche pas le titre de l'appli
-
+        toolbar.setTitle("Carte");//On affiche par contre le titre de l'activité
 
         myOpenMapView = (MapView) findViewById(R.id.openmapview);
         //Activer le zoom et le tactile
@@ -276,7 +276,7 @@ public class MapActivity extends AppCompatActivity {
 
         //On sérialise le fichier menu.xml pour l'afficher dans la barre de menu
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_carte, menu);
 
         // Ici on gère le fait qu'on pourra lancer une recherche depuis cette activité
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
