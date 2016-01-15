@@ -59,6 +59,7 @@ public class MapActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        overridePendingTransition(0,0); //Permet de ne pas avoir d'animation à l'ouverture de l'activité
 
         //On gère la toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -257,6 +258,10 @@ public class MapActivity extends AppCompatActivity {
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
+
+        overridePendingTransition(0, 0); //Permet de ne pas avoir d'animation à la fermeture de l'activité
+
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
