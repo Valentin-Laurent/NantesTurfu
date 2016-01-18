@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,23 +44,39 @@ public class ResultatRechercheActivity extends ListActivity {
         }
 
         //On cherche les stations qui contiennent le mot recherché
-        ArrayList<StationBicloo> resultatRecherche = new ArrayList<>();
-        ArrayList<String> arrayResultat = new ArrayList<>();
+        ArrayList<StationBicloo> resultatRecherche = new ArrayList<>(); //La liste qui va contenir les résultats sous la forme d'objets StationBicloo
+        ArrayList<String> arrayResultat = new ArrayList<>();            //La liste qui va contenir les adresse de ces stations
+        arrayResultat.add("Cliquez sur un résultat pour afficher le détail");
 
         for (StationBicloo s : stationsBicloo) {
-            if (s.getName().toLowerCase().contains(recherche.toLowerCase()))  {
+            if (s.getName().toLowerCase().contains(recherche.toLowerCase()))  { //On recherche dans les noms
                 resultatRecherche.add(s);
-                arrayResultat.add(s.getName());
+                arrayResultat.add(s.getAddress());
             }
         }
 
-        if (arrayResultat.size()==0) {
+        int taille = arrayResultat.size();
+
+        if (taille==0) {
+            arrayResultat.clear(); //On enlève le texte "Cliquez sur un résultat pour afficher le détail"
             arrayResultat.add("Il n'y a pas de station correspondant à votre recherche.");
         }
+
+        //On gère l'affichage des résultats
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,arrayResultat);
         setListAdapter(adapter);
+
     }
 
+    @Override
+    public void onListItemClick(ListView listView, View view, int position, long id) {
+        ListView myListView = getListView();
+        if (position != 0) { //On ne lance pas l'activité pour le premier item de la liste car il correspond au texte "Cliquez sur un résultat pour afficher le détail"
+            Intent intent = new Intent(this, DetailsActivity.class);
+            startActivity(intent);
+        }
+        //String itemClicked = (String) myListView.getAdapter().getItem(position);
+    }
     //Code recopié (la classe ListActivity gère très mal les toolbars, c'est une solution "bricolage", qui utilise une autre toolbar : "toolbar_simplifiee")
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

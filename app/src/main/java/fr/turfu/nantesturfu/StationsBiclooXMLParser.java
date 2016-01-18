@@ -58,8 +58,8 @@ public class StationsBiclooXMLParser {
                             stationBicloo.setName(text);
                         } else if (tagname.equalsIgnoreCase("number")) {
                             stationBicloo.setNumber(Integer.parseInt(text));
-                        } else if (tagname.equalsIgnoreCase("adress")) {
-                            stationBicloo.setAdress(text);
+                        } else if (tagname.equalsIgnoreCase("address")) {
+                            stationBicloo.setAddress(text);
                         }
                         break;
 

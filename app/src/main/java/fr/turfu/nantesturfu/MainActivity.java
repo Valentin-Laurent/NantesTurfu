@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 //Map : un click refresh le bordel, un clic long : lance l'activité "DétailActivity" (Flox)
 //Map : cosmétique (à la fin si on a la temps) : harmoniser les barres de menu
@@ -26,7 +27,7 @@ import java.net.URL;
 //Scraper les stations de la TAN
 //Faire un parser pour TAN et Bicloo
 //Utiliser le réglage pour le choix de l'activité lancée en premier (carte ou favoris)
-
+//Licenses etc.
 
 public class MainActivity extends AppCompatActivity {
 
