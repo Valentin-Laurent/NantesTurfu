@@ -9,6 +9,7 @@ import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+import java.math.BigDecimal;
 
 
 public class StationsBiclooXMLParser {
@@ -60,6 +61,10 @@ public class StationsBiclooXMLParser {
                             stationBicloo.setNumber(Integer.parseInt(text));
                         } else if (tagname.equalsIgnoreCase("address")) {
                             stationBicloo.setAddress(text);
+                        } else if (tagname.equalsIgnoreCase("lat")) {
+                            stationBicloo.setLat(new BigDecimal(text));
+                        } else if (tagname.equalsIgnoreCase("lng")) {
+                            stationBicloo.setLng(new BigDecimal(text));
                         }
                         break;
 
