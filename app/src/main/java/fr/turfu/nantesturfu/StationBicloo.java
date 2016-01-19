@@ -1,5 +1,9 @@
 package fr.turfu.nantesturfu;
 
+import android.location.Location;
+
+import org.osmdroid.util.GeoPoint;
+
 import java.math.BigDecimal;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -92,6 +96,10 @@ public class StationBicloo {
 
     public void setLng(BigDecimal lng) {
         this.lng = lng;
+    }
+    public GeoPoint getLoc(){
+       GeoPoint res= new GeoPoint(lat.doubleValue(),lng.doubleValue());
+        return res;
     }
 }
 
