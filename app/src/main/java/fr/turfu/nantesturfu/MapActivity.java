@@ -28,6 +28,7 @@ import android.view.MotionEvent;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
@@ -38,6 +39,8 @@ import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.math.BigDecimal;
 public class MapActivity extends AppCompatActivity {
@@ -51,6 +54,8 @@ public class MapActivity extends AppCompatActivity {
     private Drawable bic3 ;
     private Drawable bic_full ;
     private Drawable bic_empty ;
+    //map center
+    IGeoPoint c;
 
     /** Called when the activity is first created. */
     @Override
@@ -155,7 +160,6 @@ public class MapActivity extends AppCompatActivity {
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
         myOpenMapView.getOverlays().add(myScaleBarOverlay);
 
-
         // TEST with xml parser + position + update json ================================================
 
         //On récupère la liste des stations de Nantes
@@ -167,15 +171,34 @@ public class MapActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // Avant d'afficher on trie les stations par proximité au centre de l'ecran = position de l'utilisateur:
+        c = myOpenMapView.getMapCenter();
+        // tri auto avec le critere customComparator defini plus bas:
+        Collections.sort(stationsBicloo, new customComparator());
+
+        //On affiche toutes les stations sur la map:
         for (StationBicloo s:stationsBicloo) {
-            // StationBicloo s = stationsBicloo.get(1);
             Jparser parser = new Jparser(this);
-            // le parser appelle la fonction addi sur s
+            // le parser appelle la fonction addi sur s :
             parser.execute(s);
         }
         // END of oncreate() =============================================
     }
-    // ============= FONCTION POUR AJOUTER UN ITEM A LA MAP A PARTIR D UNE STATION =================================
+
+
+
+
+    // Comparateur utilisé pour le calcul des stations les plus proches :
+    public class customComparator implements Comparator<StationBicloo> {
+       @Override
+       public int compare(StationBicloo s1, StationBicloo s2) {
+            int d1=s1.getLoc().distanceTo(c);
+            int d2=s2.getLoc().distanceTo(c);
+            return d1-d2;
+        }
+    }
+
+    //  FONCTION POUR AJOUTER UN ITEM A LA MAP A PARTIR D UNE STATION ==============
     public void addicon(StationBicloo s){
         Drawable icon;
         if (s.getNvelos()==0){
@@ -304,7 +327,6 @@ public class MapActivity extends AppCompatActivity {
     private void updateCenterLoc(Location loc){
         GeoPoint locGeoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
         myMapController.setCenter(locGeoPoint);
-
         setOverlayLoc(loc);
 
         myOpenMapView.invalidate();
