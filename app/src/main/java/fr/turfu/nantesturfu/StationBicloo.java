@@ -1,6 +1,20 @@
 package fr.turfu.nantesturfu;
 
 import java.math.BigDecimal;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import javax.json.Json;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParser.Event;
 
 /**
  * Created by Valentin on 13/01/2016.
@@ -15,6 +29,30 @@ public class StationBicloo {
     private int Ntot;
     private int Nvide;
     private int Nvelos;
+
+    public int getNtot() {
+        return Ntot;
+    }
+
+    public void setNtot(int ntot) {
+        Ntot = ntot;
+    }
+
+    public int getNvide() {
+        return Nvide;
+    }
+
+    public void setNvide(int nvide) {
+        Nvide = nvide;
+    }
+
+    public int getNvelos() {
+        return Nvelos;
+    }
+
+    public void setNvelos(int nvelos) {
+        Nvelos = nvelos;
+    }
 
     public String getName() {
         return name;
@@ -56,3 +94,4 @@ public class StationBicloo {
         this.lng = lng;
     }
 }
+
