@@ -1,23 +1,6 @@
 package fr.turfu.nantesturfu;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.util.ResourceProxyImpl;
-import org.osmdroid.DefaultResourceProxyImpl;
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.Projection;
-import org.osmdroid.views.overlay.  ItemizedIconOverlay;
-import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
-import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.ScaleBarOverlay;
-
 import android.Manifest;
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -38,13 +20,25 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 
+import org.osmdroid.DefaultResourceProxyImpl;
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.ScaleBarOverlay;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.math.BigDecimal;
 public class MapActivity extends AppCompatActivity {
 
     private MapView myOpenMapView;
@@ -88,13 +82,56 @@ public class MapActivity extends AppCompatActivity {
         myOpenMapView.getOverlays().add(myItemizedIconOverlay);
         //---
 
+// Teeeeeeesssssssst with xml parser + position ================================================
 
+        //On récupère la liste des stations de Nantes
+        List<StationBicloo> stationsBicloo = null;
+        try {
+            StationsBiclooXMLParser parser = new StationsBiclooXMLParser();
+            stationsBicloo = parser.parse(getAssets().open("stationsBicloo.xml"));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ArrayList<OverlayItem> liste = new ArrayList<>();
+        int or = Color.rgb(255, 160, 0);
+        Drawable icon = this.getResources().getDrawable(R.drawable.bic);
+
+        for (StationBicloo s:stationsBicloo) {
+            String nome = s.getName();
+            double lat = s.getLat().doubleValue();
+            double lng = s.getLng().doubleValue();
+            int Ntot = 50;
+            int Nvelos = 10;
+            GeoPoint gpt = new GeoPoint(lat, lng);
+            OverlayItem oi = new OverlayItem(nome, Nvelos + " / " + Ntot, gpt);
+            oi.setMarker(icon);
+            liste.add(oi);
+        }
+            ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(liste, icon, icon, or,
+                    new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                        @Override
+                        public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                            //do something
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onItemLongPress(final int index, final OverlayItem item) {
+                            return false;
+                        }
+                    }, defaultResourceProxyImpl);
+        mOverlay.setFocusItemsOnTap(true);
+
+            myOpenMapView.getOverlays().add(mOverlay);
+
+/*
         // TEST FULL LAYERS ==================================================================
         double abs,ord;
         GeoPoint g;
         int orang=Color.rgb(245,180,0);
         Drawable icon = this.getResources().getDrawable(R.drawable.bic);
-        for (int k=0;k<100;k++) {
+        for (int k=0;k<10;k++) {
             ArrayList<OverlayItem> overit = new ArrayList<>();
             abs = Math.random() / 10 + 47.2;
             ord = Math.random() / 10 - 1.56;
@@ -110,17 +147,18 @@ public class MapActivity extends AppCompatActivity {
                             return true;
                         }
 
-                        @Override
-                        public boolean onItemLongPress(final int index, final OverlayItem item) {
-                            return false;
-                        }
-                    }, defaultResourceProxyImpl);
-            mOverlay.setFocusedItem(0);
-
-            myOpenMapView.getOverlays().add(mOverlay);
+        @Override
+        public boolean onItemLongPress(final int index, final OverlayItem item) {
+            return false;
         }
-// =========== FIN FULL LAYERS
+    }, defaultResourceProxyImpl);
+    mOverlay.setFocusedItem(0);
 
+    myOpenMapView.getOverlays().add(mOverlay);
+}
+// =========== FIN FULL LAYERS
+*/
+      /*
         // AJOUTER TOUTES LES ICONES de la TAN  ====================================================
         // Liste des icones
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
@@ -133,10 +171,6 @@ public class MapActivity extends AppCompatActivity {
         //OverlayItem i2 =new OverlayItem(s.nom, s.toString(), s.pos);
         OverlayItem i2 =new OverlayItem("Good","Morning", s.pos);
         // On crée un objet d'image "drawable", pour lui associer le fichier png "R.drawable.tan"
-      /*  Drawable icon_t = this.getResources().getDrawable(R.drawable.tan);
-        // on l'associe aux Items Bicloos
-        i1.setMarker(icon_t);
-        i2.setMarker(icon_t);*/
         // On ajoute les itemrs a la liste
         items.add(i1);
         items.add(i2);
@@ -166,7 +200,7 @@ public class MapActivity extends AppCompatActivity {
         mOverlay.setFocusItemsOnTap(true);
 // On ajoute l'overlay a la mapview
         myOpenMapView.getOverlays().add(mOverlay);
-
+*/
 
         // TEST BICLOO ===================================== =============================
         //IDEM AS TAN
