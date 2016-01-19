@@ -16,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -43,17 +44,20 @@ public class MapActivity extends AppCompatActivity {
 
     private MapView myOpenMapView;
     private MapController myMapController;
-
+    private DefaultResourceProxyImpl defaultResourceProxyImpl;
     LocationManager locationManager;
-
     ArrayList<OverlayItem> overlayItemArray;
+    private Drawable bic ;
+    private Drawable bic3 ;
+    private Drawable bic_full ;
+    private Drawable bic_empty ;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        overridePendingTransition(0,0); //Permet de ne pas avoir d'animation à l'ouverture de l'activité
+        overridePendingTransition(0, 0); //Permet de ne pas avoir d'animation à l'ouverture de l'activité
 
         //On gère la toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -61,19 +65,19 @@ public class MapActivity extends AppCompatActivity {
         ActionBar menu = getSupportActionBar();
         menu.setDisplayShowTitleEnabled(false); //On n'affiche pas le titre de l'appli
         toolbar.setTitle("Carte");//On affiche par contre le titre de l'activité
-
+        defaultResourceProxyImpl= new DefaultResourceProxyImpl(this);
         myOpenMapView = (MapView) findViewById(R.id.openmapview);
         //Activer le zoom et le tactile
         myOpenMapView.setBuiltInZoomControls(true);
         myOpenMapView.setMultiTouchControls(true);
         myMapController = (MapController) myOpenMapView.getController();
         myMapController.setZoom(15);
-
+        bic = ContextCompat.getDrawable(this, R.drawable.bic);
+        bic3 = ContextCompat.getDrawable(this, R.drawable.bic3);
+        bic_full = ContextCompat.getDrawable(this, R.drawable.bic_full);
+        bic_empty = ContextCompat.getDrawable(this, R.drawable.bic_empty);
         //--- Create Overlay
         overlayItemArray = new ArrayList<OverlayItem>();
-// Il serait pratique d'utiliser un custom resource proxy, mais c'est galere
-        DefaultResourceProxyImpl defaultResourceProxyImpl
-                = new DefaultResourceProxyImpl(this);
 
         // AJOUTER LE POINT BLEU !
         MyItemizedIconOverlay myItemizedIconOverlay
@@ -82,82 +86,6 @@ public class MapActivity extends AppCompatActivity {
         myOpenMapView.getOverlays().add(myItemizedIconOverlay);
         //---
 
-// Teeeeeeesssssssst with xml parser + position ================================================
-
-        //On récupère la liste des stations de Nantes
-        List<StationBicloo> stationsBicloo = null;
-        try {
-            StationsBiclooXMLParser parser = new StationsBiclooXMLParser();
-            stationsBicloo = parser.parse(getAssets().open("stationsBicloo.xml"));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ArrayList<OverlayItem> liste = new ArrayList<>();
-        int or = Color.rgb(255, 160, 0);
-        Drawable icon = this.getResources().getDrawable(R.drawable.bic);
-
-        for (StationBicloo s:stationsBicloo) {
-            String nome = s.getName();
-            double lat = s.getLat().doubleValue();
-            double lng = s.getLng().doubleValue();
-            int Ntot = 50;
-            int Nvelos = 10;
-            GeoPoint gpt = new GeoPoint(lat, lng);
-            OverlayItem oi = new OverlayItem(nome, Nvelos + " / " + Ntot, gpt);
-            oi.setMarker(icon);
-            liste.add(oi);
-        }
-            ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(liste, icon, icon, or,
-                    new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                        @Override
-                        public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                            //do something
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onItemLongPress(final int index, final OverlayItem item) {
-                            return false;
-                        }
-                    }, defaultResourceProxyImpl);
-        mOverlay.setFocusItemsOnTap(true);
-
-            myOpenMapView.getOverlays().add(mOverlay);
-
-/*
-        // TEST FULL LAYERS ==================================================================
-        double abs,ord;
-        GeoPoint g;
-        int orang=Color.rgb(245,180,0);
-        Drawable icon = this.getResources().getDrawable(R.drawable.bic);
-        for (int k=0;k<10;k++) {
-            ArrayList<OverlayItem> overit = new ArrayList<>();
-            abs = Math.random() / 10 + 47.2;
-            ord = Math.random() / 10 - 1.56;
-            g = new GeoPoint(abs, ord);
-            OverlayItem it = new OverlayItem("item numero" + Integer.toString(k), "blabla", g);
-            it.setMarker(icon);
-            overit.add(it);
-            ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(overit, icon, icon, orang,
-                    new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                        @Override
-                        public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                            //do something
-                            return true;
-                        }
-
-        @Override
-        public boolean onItemLongPress(final int index, final OverlayItem item) {
-            return false;
-        }
-    }, defaultResourceProxyImpl);
-    mOverlay.setFocusedItem(0);
-
-    myOpenMapView.getOverlays().add(mOverlay);
-}
-// =========== FIN FULL LAYERS
-*/
       /*
         // AJOUTER TOUTES LES ICONES de la TAN  ====================================================
         // Liste des icones
@@ -201,48 +129,6 @@ public class MapActivity extends AppCompatActivity {
 // On ajoute l'overlay a la mapview
         myOpenMapView.getOverlays().add(mOverlay);
 */
-
-        // TEST BICLOO ===================================== =============================
-        //IDEM AS TAN
-        int orange=Color.rgb(245,180,0);
-        ArrayList<OverlayItem> items2 = new ArrayList<OverlayItem>();
-        GeoPoint g2=new GeoPoint(47.21, -1.555);
-        Station s2=new BStation(g2);
-        OverlayItem it1 =new OverlayItem(s2.nom, s2.toString(), s2.pos);
-        OverlayItem it2 =new OverlayItem("5", "Station quasi vide", "2 / 100", new GeoPoint(47.215, -1.56));
-        OverlayItem it3 =new OverlayItem("Station bicloo pleine", "100 / 100", new GeoPoint(47.21, -1.56));
-        OverlayItem it4 =new OverlayItem("Station vide", "0 / 100", new GeoPoint(47.215, -1.555));
-        Drawable bic = this.getResources().getDrawable(R.drawable.bic);
-        Drawable bic3 = this.getResources().getDrawable(R.drawable.bic3);
-        Drawable bic_full = this.getResources().getDrawable(R.drawable.bic_full);
-        Drawable bic_empty = this.getResources().getDrawable(R.drawable.bic_empty);
-        it1.setMarker(bic);
-        it2.setMarker(bic3);
-        it3.setMarker(bic_full);
-        it4.setMarker(bic_empty);
-        items2.add(it1); // Lat/Lon decimal degrees
-        items2.add(it2);
-        items2.add(it3);
-        items2.add(it4);
-//the overlay (we can change default color in itemizedoverlaywithfocus.java)
-        ItemizedOverlayWithFocus<OverlayItem> mOverlay2 = new ItemizedOverlayWithFocus<OverlayItem>(items2,bic,bic,orange,
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        //do something
-                        return true;
-                    }
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        return false;
-                    }
-                }, defaultResourceProxyImpl);
-        mOverlay2.setFocusItemsOnTap(true);
-
-        myOpenMapView.getOverlays().add(mOverlay2);
-
-
-
         //======================================================================== END test
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -268,6 +154,69 @@ public class MapActivity extends AppCompatActivity {
         //Add Scale Bar
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
         myOpenMapView.getOverlays().add(myScaleBarOverlay);
+
+
+        // TEST with xml parser + position + update json ================================================
+
+        //On récupère la liste des stations de Nantes
+        List<StationBicloo> stationsBicloo = null;
+        try {
+            StationsBiclooXMLParser parser = new StationsBiclooXMLParser();
+            stationsBicloo = parser.parse(getAssets().open("stationsBicloo.xml"));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (StationBicloo s:stationsBicloo) {
+            // StationBicloo s = stationsBicloo.get(1);
+            Jparser parser = new Jparser(this);
+            // le parser appelle la fonction addi sur s
+            parser.execute(s);
+        }
+        // END of oncreate() =============================================
+    }
+    // ============= FONCTION POUR AJOUTER UN ITEM A LA MAP A PARTIR D UNE STATION =================================
+    public void addicon(StationBicloo s){
+        Drawable icon;
+        if (s.getNvelos()==0){
+            icon=bic_empty;
+        }
+        else if(s.getNvide()==0){
+            icon=bic_full;
+        }
+        else if(s.getNvelos()<4){
+            icon=bic3;
+        }
+        else {
+            icon=bic;
+        }
+        int or = Color.rgb(255, 160, 0);
+        String aff=Integer.toString(s.getNvelos()) + " / " + Integer.toString(s.getNtot());
+        String nome = s.getName();
+        double lat = s.getLat().doubleValue();
+        double lng = s.getLng().doubleValue();
+        GeoPoint gpt = new GeoPoint(lat, lng);
+        OverlayItem oi = new OverlayItem(nome, aff, gpt);
+        oi.setMarker(icon);
+        ArrayList<OverlayItem> liste = new ArrayList<>();
+        liste.add(oi);
+        // }
+        ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(liste, icon, icon, or,
+                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                        //do something
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onItemLongPress(final int index, final OverlayItem item) {
+                        return false;
+                    }
+                }, defaultResourceProxyImpl);
+        mOverlay.setFocusItemsOnTap(true);
+        //mOverlay.setFocusedItem(0);
+        myOpenMapView.getOverlays().add(mOverlay);
     }
 
     @Override
