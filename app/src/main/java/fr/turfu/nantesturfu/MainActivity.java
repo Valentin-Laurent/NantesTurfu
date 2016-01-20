@@ -34,6 +34,7 @@ import java.util.ArrayList;
 //Rotation
 //Nettoyer et commenter code
 //Javadoc
+//Gérer les tasks pour avoir un bouton retour logique quand on commence l'appli par carte
 
 /*TAN :
 Faire l'activité DétailActivity
