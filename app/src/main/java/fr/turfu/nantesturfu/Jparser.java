@@ -4,6 +4,7 @@ package fr.turfu.nantesturfu;
  * Created by FT on 19/01/2016.
  */
 
+    import android.app.Activity;
     import android.os.AsyncTask;
 
     import java.io.BufferedReader;
@@ -29,9 +30,9 @@ package fr.turfu.nantesturfu;
      */
 
     public class Jparser extends AsyncTask<StationBicloo, Void, Void> {
-        MapActivity m;
-        public Jparser(MapActivity map){
-           m=map;
+        Activity activiteSource;
+        public Jparser(MapActivity activiteSource){
+           this.activiteSource=activiteSource;
         }
         @Override
         protected Void doInBackground(StationBicloo... params) {
@@ -103,7 +104,12 @@ while((line = in.readLine()) != null) {
             event = parser.next();    //velos
             sortie.setNvelos(parser.getInt());
             parser.close();
-            m.addicon(sortie);
+
+            //On test quelle activité à appelé le parser
+            if (activiteSource instanceof MapActivity) {
+                ((MapActivity) activiteSource).addicon(sortie);
+            }
+
             return null;
             } catch (IOException e) {
                 e.printStackTrace();
