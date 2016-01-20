@@ -60,9 +60,6 @@ package fr.turfu.nantesturfu;
             InputStream response = null;
             try {
                 response = connection.getInputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
 // Cela permet de printer la reponse de la requete pour tester
  /*   BufferedReader in = new BufferedReader(new InputStreamReader(response));
@@ -108,6 +105,10 @@ while((line = in.readLine()) != null) {
             parser.close();
             m.addicon(sortie);
             return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
         protected void onPostExecute(StationBicloo stat) {
