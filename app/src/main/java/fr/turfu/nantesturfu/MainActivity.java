@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //On lance l'activité map à la place de celle-ci suivant les préférences de l'utilisateur
-        int p = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getInt("Menu par défaut", 0);
-        if (p == 1) {
+        String p = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("Menu par défaut", "0");
+        if (p.equals("1")) {
             Intent intent2 = new Intent(this, MapActivity.class);
             startActivity(intent2);
         }
@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("Favoris");//On affiche par contre le titre de l'activité
 
 
-        //test d'appel à l'API
-        //new CallAPI().execute("https://api.jcdecaux.com/vls/v1/stations/10042?contract=paris&apiKey=1585b03813a6d3d94529262d9a01b8ba02a33ecb");
 
     }
 
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Classe qui permet d'effectuer la requete GET hors du thread UI
-    private class CallAPI extends AsyncTask<String, String, String> {
+    /*private class CallAPI extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {
@@ -130,5 +128,5 @@ public class MainActivity extends AppCompatActivity {
             test.setText(resultat);
         }
 
-    }
+    }*/
 }
