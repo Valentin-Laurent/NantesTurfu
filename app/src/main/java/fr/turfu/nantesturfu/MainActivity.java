@@ -26,13 +26,20 @@ import java.net.URL;
 import java.util.ArrayList;
 
 //Map : un click refresh le bordel, un clic long : lance l'activité "DétailActivity" (Flox)
-//Map : cosmétique (à la fin si on a la temps) : harmoniser les barres de menu
-//Faire l'activité DétailActivity
-//Faire l'activité Favoris : c'est la MainActivity. On va utiliser tinyDB couplée à un SimpleAdapter pour les afficher (voir tuto OpenClassroom + doc tinyDB)
-//Scraper les stations de la TAN
-//Faire un parser pour TAN
+//Activité Favoris : utiliser un simple adapter pour afficher le nb de bicloo
+
 //Factoriser le code qui gère la toolbar
 //Licenses etc.
+//Refresh la map à chaque ajout d'icone
+//Rotation
+//Nettoyer et commenter code
+//Javadoc
+
+/*TAN :
+Faire l'activité DétailActivity
+Scraper les stations de la TAN
+Faire un parser pour TAN
+ */
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -60,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //On récupère les favoris dans une liste :
         GestionFavoris gestionFav = new GestionFavoris(getApplicationContext());
-        gestionFav.addFav("Ma grosse station");
+        gestionFav.addFav("Felix est un lossbo");
         ArrayList<String> arrayFavoris = gestionFav.getFav();
         if (arrayFavoris.size()==0) { //Si l'utilisateur n'a pas de favoris :
             arrayFavoris.add("Vous n'avez pas de favoris");
@@ -116,10 +123,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    //Cette méthode lance l'activité détail en passant le nom du favoris en paramètre
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
         if (position > 0) {
             Intent intent = new Intent(this, DetailsActivity.class);
-            //intent.putExtra("position", position);
+            intent.putExtra("position", position); //On passe l'index du favoris en paramètre
             startActivity(intent);
         }
     }
