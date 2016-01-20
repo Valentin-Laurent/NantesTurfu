@@ -27,7 +27,7 @@ import java.util.ArrayList;
 //Faire l'activité Favoris : c'est la MainActivity. On va utiliser tinyDB couplée à un SimpleAdapter pour les afficher (voir tuto OpenClassroom + doc tinyDB)
 //Scraper les stations de la TAN
 //Faire un parser pour TAN
-//Utiliser le réglage pour le choix de l'activité lancée en premier (carte ou favoris)
+//Factoriser le code qui gère la toolbar
 //Licenses etc.
 
 public class MainActivity extends AppCompatActivity {
