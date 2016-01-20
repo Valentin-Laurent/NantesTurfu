@@ -13,10 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -34,7 +30,7 @@ import java.util.ArrayList;
 //Factoriser le code qui gère la toolbar
 //Licenses etc.
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener { //On a besoin d'implémenter OnItemClickListener pour avoir des favoris cliquables
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (p.equals("1")) {
             Intent intent2 = new Intent(this, MapActivity.class);
             startActivity(intent2);
-            this.finish(); //On ferme cette activité sinon en faisant "retour" l'utilisateur reviendra sur cette activité ce qui n'est pas logique
         }
 
         setContentView(R.layout.activity_main);
@@ -57,20 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         menu.setDisplayShowTitleEnabled(false); //On n'affiche pas le titre de l'appli
         toolbar.setTitle("Favoris");//On affiche par contre le titre de l'activité
 
-        //On récupère les favoris dans une liste :
-        GestionFavoris gestionFav = new GestionFavoris(getApplicationContext());
-        ArrayList<String> arrayFavoris = gestionFav.getFav();
-        if (arrayFavoris.size()==0) { //Si l'utilisateur n'a pas de favoris :
-            arrayFavoris.add("Vous n'avez pas de favoris");
-        } else {                    //Sinon :
-            arrayFavoris.add(0,"Cliquez sur un résultat pour afficher le détail");
-        }
 
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,arrayFavoris);
-        ListView listView = (ListView) findViewById(R.id.listeFavoris);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this); //Pour lancer la méthode onItemClic
 
     }
 
@@ -111,14 +93,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             default:
                 return super.onOptionsItemSelected(item);
 
-        }
-    }
-
-    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-        if (position > 0) {
-            Intent intent = new Intent(this, DetailsActivity.class);
-            //intent.putExtra("position", position);
-            startActivity(intent);
         }
     }
 

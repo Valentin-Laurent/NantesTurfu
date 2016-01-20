@@ -22,10 +22,13 @@
         tools:context="fr.turfu.nantesturfu.MainActivity"
         tools:showIn="@layout/activity_main">
 
-        <ListView
-            android:id="@+id/listeFavoris"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textNoSuggestions"
+            android:lines="1"
+            android:hint="@string/rien" />
 
     </RelativeLayout>
 
