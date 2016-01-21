@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -42,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.math.BigDecimal;
 public class MapActivity extends AppCompatActivity {
 
     private MapView myOpenMapView;
@@ -56,8 +56,9 @@ public class MapActivity extends AppCompatActivity {
     private Drawable bic_empty ;
     //map center
     IGeoPoint c;
+    GeoPoint center;
 
-    /** Called when the activity is first created. */
+    /** onCreate = A l'ouverture de l'activité. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,52 +90,6 @@ public class MapActivity extends AppCompatActivity {
                 = new MyItemizedIconOverlay(
                 overlayItemArray, null, defaultResourceProxyImpl);
         myOpenMapView.getOverlays().add(myItemizedIconOverlay);
-        //---
-
-      /*
-        // AJOUTER TOUTES LES ICONES de la TAN  ====================================================
-        // Liste des icones
-        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
-        // on crée chaque element i
-        OverlayItem i1 =new OverlayItem("C'est la tan !", "coucou", new GeoPoint(47.22, -1.55));
-        // On crée un item i2 a partir d'un element de la classe Station
-        GeoPoint ghb=new GeoPoint(47.215, -1.55);
-        Station s=new TStation(ghb);
-        // on génere i2 à partir de s
-        //OverlayItem i2 =new OverlayItem(s.nom, s.toString(), s.pos);
-        OverlayItem i2 =new OverlayItem("Good","Morning", s.pos);
-        // On crée un objet d'image "drawable", pour lui associer le fichier png "R.drawable.tan"
-        // On ajoute les itemrs a la liste
-        items.add(i1);
-        items.add(i2);
-//On inclut la liste des icones dans un overlay
-
-        //ItemizedOverlayWithFocus(final List<Item> aList, final Drawable pMarker,
-        // final Drawable pMarkerFocused, final int pFocusedBackgroundColor,
-        //  final ItemizedIconOverlay.OnItemGestureListener<Item> aOnItemTapListener, final ResourceProxy pResourceProxy)
-
-        Drawable tan = this.getResources().getDrawable(R.drawable.tan);
-        Drawable tan_foc = this.getResources().getDrawable(R.drawable.tan_foc);
-        int col=Color.rgb(50,110,180);
-// (we can change default color in itemizedoverlaywithfocus.java)
-        ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(items, tan, tan_foc, col,
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        return false;
-                    }
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        return false;
-                    }
-                }, defaultResourceProxyImpl);
-        // Affichage du texte au click sur icone. Le texte disparait
-        // lorsqu'on click sur une autre icone du meme overlay (meme couleur ici)
-        mOverlay.setFocusItemsOnTap(true);
-// On ajoute l'overlay a la mapview
-        myOpenMapView.getOverlays().add(mOverlay);
-*/
-        //======================================================================== END test
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -160,7 +115,13 @@ public class MapActivity extends AppCompatActivity {
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
         myOpenMapView.getOverlays().add(myScaleBarOverlay);
 
-        // TEST with xml parser + position + update json ================================================
+        /**
+         * On récupère la liste des stations avec le Parser xml
+         * On les classe par distance aux centre de l'écran
+         * On appelle l'api bicloo pour chaque station de la liste et
+         * on crée un overlay pour chaque qu'on ajoute a la mapview
+         *
+          */
 
         //On récupère la liste des stations de Nantes
         List<StationBicloo> stationsBicloo = null;
@@ -173,6 +134,7 @@ public class MapActivity extends AppCompatActivity {
         }
         // Avant d'afficher on trie les stations par proximité au centre de l'ecran = position de l'utilisateur:
         c = myOpenMapView.getMapCenter();
+
         // tri auto avec le critere customComparator defini plus bas:
         Collections.sort(stationsBicloo, new customComparator());
 
@@ -182,24 +144,30 @@ public class MapActivity extends AppCompatActivity {
             // le parser appelle la fonction addi sur s :
             parser.execute(s);
         }
-        // END of oncreate() =============================================
     }
 
+ /* ================================================= END ONCREATE ===================================== */
 
 
-
-    // Comparateur utilisé pour le calcul des stations les plus proches :
+    /**
+    * Comparateur utilisé pour le calcul des stations les plus proches :
+    */
     public class customComparator implements Comparator<StationBicloo> {
-       @Override
-       public int compare(StationBicloo s1, StationBicloo s2) {
-            int d1=s1.getLoc().distanceTo(c);
-            int d2=s2.getLoc().distanceTo(c);
+        IGeoPoint cen = overlayItemArray.get(0).getPoint();
+        @Override
+        public int compare(StationBicloo s1, StationBicloo s2) {
+            int d1=s1.getLoc().distanceTo(cen);
+            int d2=s2.getLoc().distanceTo(cen);
             return d1-d2;
         }
     }
 
-    //  FONCTION POUR AJOUTER UN ITEM A LA MAP A PARTIR D UNE STATION ==============
+    /**
+     *FONCTION POUR AJOUTER UN ITEM A LA MAP A PARTIR D UNE STATION
+     * @param s // station bicloo
+     */
     public void addicon(StationBicloo s){
+        // Choix de l'image de l'icone
         Drawable icon;
         if (s.getNvelos()==0){
             icon=bic_empty;
@@ -213,7 +181,9 @@ public class MapActivity extends AppCompatActivity {
         else {
             icon=bic;
         }
+        // fond du rectangle de texte au dessus des icones:
         int or = Color.rgb(255, 160, 0);
+        // text icon:
         String aff=Integer.toString(s.getNvelos()) + " / " + Integer.toString(s.getNtot());
         String nome = s.getName();
         double lat = s.getLat().doubleValue();
@@ -223,7 +193,9 @@ public class MapActivity extends AppCompatActivity {
         oi.setMarker(icon);
         ArrayList<OverlayItem> liste = new ArrayList<>();
         liste.add(oi);
-        // }
+        // On crée un overlay pour chaque item (= icone), afin de tous les activer en meme temps, pour afficher le rectangle au dessus des items.
+
+        //creation overlay
         ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(liste, icon, icon, or,
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
@@ -237,6 +209,7 @@ public class MapActivity extends AppCompatActivity {
                         return false;
                     }
                 }, defaultResourceProxyImpl);
+        // sert a activer desactiver au click lorsqu'on a plusieurs items dans un overlay
         mOverlay.setFocusItemsOnTap(true);
         //mOverlay.setFocusedItem(0);
         myOpenMapView.getOverlays().add(mOverlay);
