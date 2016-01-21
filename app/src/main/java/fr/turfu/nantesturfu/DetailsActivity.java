@@ -19,7 +19,7 @@ public class DetailsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        int position = intent.getIntExtra("position", 0);
+        int position = intent.getIntExtra("position", 1);
         GestionFavoris gestionFav = new GestionFavoris(getApplicationContext());
         ArrayList<String> arrayFavoris = gestionFav.getFav();
         currentFavoris = arrayFavoris.get(position-1);
