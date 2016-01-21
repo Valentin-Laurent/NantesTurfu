@@ -1,24 +1,9 @@
 package fr.turfu.nantesturfu;
 
-import android.location.Location;
-
 import org.osmdroid.util.GeoPoint;
 
 import java.math.BigDecimal;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import javax.json.Json;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParser.Event;
+
 
 /**
  * Created by Valentin on 13/01/2016.

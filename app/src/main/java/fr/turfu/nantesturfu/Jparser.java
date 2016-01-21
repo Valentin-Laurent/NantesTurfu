@@ -2,32 +2,22 @@ package fr.turfu.nantesturfu;
 
 /**
  * Created by FT on 19/01/2016.
+ * Le parser est déclenché par Mapactivity et par Favoris Activity
  */
 
     import android.app.Activity;
     import android.os.AsyncTask;
-
-    import java.io.BufferedReader;
     import java.io.IOException;
     import java.io.InputStream;
     import java.io.InputStreamReader;
-    import java.io.StringReader;
     import java.io.UnsupportedEncodingException;
-    import java.math.BigDecimal;
-    import java.net.MalformedURLException;
     import java.net.URL;
     import java.net.URLConnection;
     import java.net.URLEncoder;
-    import java.util.IllegalFormatException;
-
     import javax.json.Json;
     import javax.json.stream.JsonParser;
     import javax.json.stream.JsonParser.Event;
 
-    /**
-     *
-     * @author FT
-     */
 
     public class Jparser extends AsyncTask<StationBicloo, Void, Void> {
         Activity activiteSource;
