@@ -1,6 +1,7 @@
 package fr.turfu.nantesturfu;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,8 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
@@ -138,16 +142,32 @@ public class MapActivity extends AppCompatActivity {
         // tri auto avec le critere customComparator defini plus bas:
         Collections.sort(stationsBicloo, new customComparator());
 
-        //On affiche toutes les stations sur la map:
-        for (StationBicloo s:stationsBicloo) {
-            Jparser parser = new Jparser(this);
-            // le parser appelle la fonction addi sur s :
-            parser.execute(s);
+
+        if (!isNetworkAvailable()){
+            Toast.makeText(this, "Votre connexion internet est desactivée", Toast.LENGTH_SHORT).show();
+            for (StationBicloo s: stationsBicloo){
+                addicon(s);
+            }
+        }
+        else {
+            //On affiche toutes les stations sur la map:
+            for (StationBicloo s : stationsBicloo) {
+                Jparser parser = new Jparser(this);
+                // le parser appelle la fonction addi sur s :
+                parser.execute(s);
+            }
         }
     }
 
  /* ================================================= END ONCREATE ===================================== */
 
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
     /**
     * Comparateur utilisé pour le calcul des stations les plus proches :
@@ -184,7 +204,11 @@ public class MapActivity extends AppCompatActivity {
         // fond du rectangle de texte au dessus des icones:
         int or = Color.rgb(255, 160, 0);
         // text icon:
-        String aff=Integer.toString(s.getNvelos()) + " / " + Integer.toString(s.getNtot());
+        String aff;
+        if (s.getNtot()>0) {
+            aff = Integer.toString(s.getNvelos()) + " / " + Integer.toString(s.getNtot());
+        }
+        else{ aff = "Veuillez activer internet et relancer la carte...";}
         String nome = s.getName();
         double lat = s.getLat().doubleValue();
         double lng = s.getLng().doubleValue();
