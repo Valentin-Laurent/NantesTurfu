@@ -16,7 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -24,6 +26,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 //Map : un click refresh le bordel, un clic long : lance l'activité "DétailActivity" (Flox)
 //Activité Favoris : utiliser un simple adapter pour afficher le nb de bicloo
@@ -35,6 +39,7 @@ import java.util.ArrayList;
 //Nettoyer et commenter code
 //Javadoc
 //Gérer les tasks pour avoir un bouton retour logique quand on commence l'appli par carte
+//Toast pas de connection
 
 /*TAN :
 Faire l'activité DétailActivity
@@ -68,19 +73,36 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //On récupère les favoris dans une liste :
         GestionFavoris gestionFav = new GestionFavoris(getApplicationContext());
-        gestionFav.addFav("Felix est un lossbo");
         ArrayList<String> arrayFavoris = gestionFav.getFav();
         if (arrayFavoris.size()==0) { //Si l'utilisateur n'a pas de favoris :
             arrayFavoris.add("Vous n'avez pas de favoris");
         } else {                    //Sinon :
-            arrayFavoris.add(0,"Cliquez sur un résultat pour afficher le détail");
+            arrayFavoris.add(0,"Cliquez sur un résultat pour l'afficher sur la carte");
         }
 
+        //On récupère le nombre de Bicloo disponibles dans une liste :
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,arrayFavoris);
+
+        //On déclare une liste de HashMap, chaque HashMap va contenir le nom de la station ainsi que le nombre de stations
+        HashMap<String, String> element;
+        List<HashMap<String, String>> listeFavoris = new ArrayList<HashMap<String, String>>();
+        element = new HashMap<String, String>();
+        element.put("nom", arrayFavoris.get(0)); //On ajoute le premier élément qui correspond à du texte informatif ("vous n'avez pas de favoris", ou l'autre)
+        listeFavoris.add(element);
+        for (int j=1;j<arrayFavoris.size();j++) {
+            element = new HashMap<String, String>();
+            element.put("nom", arrayFavoris.get(j));
+            element.put("infos","test");
+            listeFavoris.add(element);
+        }
+
+        //On gère l'affichage de la liste de HashMap
+        ListAdapter adapter = new SimpleAdapter(this,listeFavoris,android.R.layout.simple_list_item_2,new String[] {"nom", "infos"},new int[] {android.R.id.text1, android.R.id.text2 });
         ListView listView = (ListView) findViewById(R.id.listeFavoris);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this); //Pour lancer la méthode onItemClic
+
+
 
     }
 
