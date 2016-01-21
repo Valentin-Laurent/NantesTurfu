@@ -30,23 +30,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//Map : un click refresh le bordel, un clic long : lance l'activité "DétailActivity" (Flox)
-//Activité Favoris : utiliser un simple adapter pour afficher le nb de bicloo
+/*Flox
+Licenses etc.
+Nettoyer et commenter code (enlever les classes useless)
+Javadoc
+Affichage des stations hors connection
+Toast pas de connection sur la carte
 
-//Factoriser le code qui gère la toolbar
-//Licenses etc.
-//Refresh la map à chaque ajout d'icone
-//Rotation
-//Nettoyer et commenter code
-//Javadoc
-//Gérer les tasks pour avoir un bouton retour logique quand on commence l'appli par carte
-//Toast pas de connection
+Si t'as le temps :
+Refresh la map à chaque ajout d'icone
+Rotation
+*/
 
-/*TAN :
-Faire l'activité DétailActivity
-Scraper les stations de la TAN
-Faire un parser pour TAN
- */
+/*Val
+Nettoyer et commenter code
+Javadoc
+Virer détail acitivity
+Recherche avec le détail
+Un appui sur recherche ajoute au favoris
+Un appui sur favoris retire des favoris
+
+Si j'ai le temps :
+Menu de confirmation pour les les ajouts/retraitde favoris
+Factoriser le code qui gère la toolbar
+Gérer les tasks pour avoir un bouton retour logique quand on commence l'appli par carte
+*/
+
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     public ArrayList<String> nbVelos;
