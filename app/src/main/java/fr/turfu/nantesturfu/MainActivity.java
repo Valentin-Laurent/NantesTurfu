@@ -87,7 +87,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //On récupère les favoris dans une liste :
         GestionFavoris gestionFav = new GestionFavoris(getApplicationContext());
         gestionFav.clearFav();
-        gestionFav.addFav("00066-CHANZY");
+        gestionFav.addFav("PLACE RICORDEAU");
+        gestionFav.addFav("MACHINE DE L'ÎLE - 3 BD LEON BUREAU");
+        gestionFav.addFav("GARE MARITIME - PLACE JACKSONVILLE");
         ArrayList<String> arrayFavoris = gestionFav.getFav();
 
         //On récupère la liste des stations de Nantes
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //On récupère le nombre de Bicloo disponibles pour chaque station favorite dans une liste :
         for (String f:arrayFavoris) {
             for (StationBicloo s:stationsBicloo) {
-                if (f.equals(s.getName())) {
+                if (f.equals(s.getAddress())) {
                     Jparser parser = new Jparser(this);
                     parser.execute(s); //Le parser modifie la liste les horaires qui sont public
                     try {
@@ -126,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         else {                    //Sinon :
             element = new HashMap<>();
-            element.put("nom", "Cliquez sur un résultat pour l'afficher sur la carte");
+            element.put("nom", "Cliquez sur un résultat pour afficher le détail");
             listeFavoris.add(element);
             for (int j = 0; j < arrayFavoris.size(); j++) {
                 element = new HashMap<>();
