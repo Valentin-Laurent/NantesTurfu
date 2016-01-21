@@ -5,6 +5,7 @@ package fr.turfu.nantesturfu;
  */
 
     import android.app.Activity;
+    import android.content.Intent;
     import android.os.AsyncTask;
 
     import java.io.BufferedReader;
@@ -18,6 +19,7 @@ package fr.turfu.nantesturfu;
     import java.net.URL;
     import java.net.URLConnection;
     import java.net.URLEncoder;
+    import java.util.ArrayList;
     import java.util.IllegalFormatException;
 
     import javax.json.Json;
@@ -31,7 +33,7 @@ package fr.turfu.nantesturfu;
 
     public class Jparser extends AsyncTask<StationBicloo, Void, Void> {
         Activity activiteSource;
-        public Jparser(MapActivity activiteSource){
+        public Jparser(Activity activiteSource){
            this.activiteSource=activiteSource;
         }
         @Override
@@ -109,10 +111,16 @@ while((line = in.readLine()) != null) {
             if (activiteSource instanceof MapActivity) {
                 ((MapActivity) activiteSource).addicon(sortie);
             }
+            else if (activiteSource instanceof MainActivity) {
+                String afficher = Integer.toString(sortie.getNvelos())+"/"+Integer.toString(sortie.getNtot());
+                ((MainActivity) activiteSource).nbVelos.add(afficher);
+            }
 
             return null;
             } catch (IOException e) {
-                e.printStackTrace();
+                if (activiteSource instanceof MainActivity) {
+                    ((MainActivity) activiteSource).nbVelos.add("Pas de connection");
+                }
                 return null;
             }
         }
