@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -55,6 +56,7 @@ public class MapActivity extends AppCompatActivity {
     private Drawable bic_empty ;
     //map center
     IGeoPoint c;
+    GeoPoint center;
 
     /** onCreate = A l'ouverture de l'activité. */
     @Override
@@ -132,6 +134,7 @@ public class MapActivity extends AppCompatActivity {
         }
         // Avant d'afficher on trie les stations par proximité au centre de l'ecran = position de l'utilisateur:
         c = myOpenMapView.getMapCenter();
+
         // tri auto avec le critere customComparator defini plus bas:
         Collections.sort(stationsBicloo, new customComparator());
 
@@ -150,10 +153,11 @@ public class MapActivity extends AppCompatActivity {
     * Comparateur utilisé pour le calcul des stations les plus proches :
     */
     public class customComparator implements Comparator<StationBicloo> {
-       @Override
-       public int compare(StationBicloo s1, StationBicloo s2) {
-            int d1=s1.getLoc().distanceTo(c);
-            int d2=s2.getLoc().distanceTo(c);
+        IGeoPoint cen = overlayItemArray.get(0).getPoint();
+        @Override
+        public int compare(StationBicloo s1, StationBicloo s2) {
+            int d1=s1.getLoc().distanceTo(cen);
+            int d2=s2.getLoc().distanceTo(cen);
             return d1-d2;
         }
     }
