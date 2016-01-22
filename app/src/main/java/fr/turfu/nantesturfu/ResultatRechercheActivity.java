@@ -19,11 +19,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe qui va afficher les résultats de la recherche
+ */
 public class ResultatRechercheActivity extends ListActivity {
+    //Les 3 variables doivent être en attributs pour les même raisons que les attributs de la MainActivity
     private int position;
     private String recherche; //La chaine de caractère qui contiendra ce que l'utilisateur à recherché.
     private ArrayList<String> arrayResultat;
 
+    /**
+     * Dans cette méthode on récupère l'intent généré par la recherche, on récupère la liste des stations Bicloo, on affiche les résultats
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,11 +78,15 @@ public class ResultatRechercheActivity extends ListActivity {
 
     }
 
+    /**
+     *Méthode qui permet de gérer le click sur un résultat
+     * @param position La position du résultat sur lequel on a cliqué
+     */
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         this.position = position;
-        if (position > 0) {
-            new AlertDialog.Builder(this)
+        if (position > 0) { //On ne déclenche rien si l'user clique sur le texte "Cliquez sur un résultat pour ajouter la station des favoris"
+            new AlertDialog.Builder(this) //On déclenche une fenêtre pour confirmer l'action
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Voulez-vous vraiment ajouter cette station aux favoris ?")
                     .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
@@ -82,6 +94,7 @@ public class ResultatRechercheActivity extends ListActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
+                            //On ajoute le favoris
                             GestionFavoris gestionFav = new GestionFavoris(ResultatRechercheActivity.this);
                             gestionFav.addFav(arrayResultat.get(ResultatRechercheActivity.this.position));
                         }
@@ -90,7 +103,11 @@ public class ResultatRechercheActivity extends ListActivity {
                     .show();
         }
     }
-    //Code recopié (la classe ListActivity gère très mal les toolbars, c'est une solution "bricolage", qui utilise une autre toolbar : "toolbar_simplifiee")
+
+    /**
+     *Code recopié (la classe ListActivity gère très mal les toolbars, c'est une solution "bricolage", qui utilise une autre toolbar : "toolbar_simplifiee")
+     */
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -108,7 +125,9 @@ public class ResultatRechercheActivity extends ListActivity {
         bar.setTitle("Recherche pour : " + recherche);
     }
 
-    //Permet de ne pas avoir d'animation à la fermeture de l'activité
+    /**
+     * Permet de ne pas avoir d'animation à la fermeture de l'activité
+     */
     @Override public void onPause() {
         super.onPause();
         overridePendingTransition(0, 0);
