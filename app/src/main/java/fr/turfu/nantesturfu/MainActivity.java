@@ -49,18 +49,23 @@ Si j'ai le temps :
 Factoriser le code qui gère la toolbar
 */
 
-
+/**
+ * Activité qui gère les favoris. Elle s'appelle Main car à l'origine ça a été la première activité du projet
+ */
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-    public ArrayList<String> nbVelos;
+    public ArrayList<String> nbVelos; //L'attribut nbVelos est modifié par Jparser. Pas de getter/setter, le projet est relativement petit pour mettre cet attribut en public
+    //La méthode onClick de la boite de dialogue (déclarée dans la méthode onItemClick) a besoin d'accéder ces variables
     private ArrayList<String> arrayFavoris;
     private int position;
 
-
+    /**
+     * La méthode principale de la classe. Elle récupère les favoris, les compare à la liste des stations Bicloo, va cherche les informations des stations corresponantes, initialise les vues (toolbar, listview) pour afficher le tout
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        nbVelos = new ArrayList<>();
-
+        nbVelos = new ArrayList<>(); //Va contenir une liste de nombre de vélos dispo/nombre de vélo total : "15/20","0/18", etc...
         setContentView(R.layout.activity_main);
 
         //On gère la toolbar
@@ -89,10 +94,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             for (StationBicloo s:stationsBicloo) {
                 if (f.equals(s.getAddress())) {
                     Jparser parser = new Jparser(this);
-                    parser.execute(s); //Le parser modifie la liste les horaires qui sont public
+                    parser.execute(s); //Le parser modifie lui-même la variable nbVelos
+                    //Cette instruction permet d'attendre que le parser ai fini son execution pour continuer.
+                    //Elle est indispensable sinon la méthode onCreate se poursuit sans que nbVélos soit actualisée et le code qui suit devient incohérent
                     try {
                         parser.get();
-                        String boucle = "ok";
                     }
                     catch (Exception e) {
                         nbVelos.add("Erreur");
@@ -101,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
 
-        //On déclare une liste de HashMap, chaque HashMap va contenir le nom de la station ainsi que le nombre de stations
+        //On déclare une liste de HashMap, chaque HashMap va contenir le nom de la station ainsi que la fameuse variable nbVélos
         List<HashMap<String, String>> listeFavoris = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> element;
         if (arrayFavoris.size()==0) { //Si l'utilisateur n'a pas de favoris :
@@ -109,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             element.put("nom", "Vous n'avez pas de favoris");
             listeFavoris.add(element);
         }
-        else if (arrayFavoris.size()> 0) {                    //Sinon :
+        else if (arrayFavoris.size()> 0) {  //Sinon :
             element = new HashMap<>();
             element.put("nom", "Cliquez sur un résultat pour supprimer la station des favoris");
             listeFavoris.add(element);
@@ -129,7 +135,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-
+    /**
+     * Méthode qui permet d'intialiser la barre de menu à l'aide du fichier menu.xml et de prendre en charge la recherche
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         super.onCreateOptionsMenu(menu);
@@ -146,17 +156,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return true;
     }
 
-
-    //Méthode pour gérer le clic sur les bouttons du menu (sauf la recherche qui est gérée directement par le search manager
+    /**
+     * Méthode pour gérer le clic sur les boutons du menu (sauf la recherche qui est gérée directement par le search manager
+     * @param item
+     * @return retourne un booléen pour dire que l'action a été effectuée
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.préférences:
                 Intent intent = new Intent(this, ReglagesActivity.class);
                 startActivity(intent);
-                return true;
-
-            case R.id.favoris:
                 return true;
 
             case R.id.carte:
@@ -166,15 +176,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             default:
                 return super.onOptionsItemSelected(item);
-
         }
     }
 
-    //Cette méthode lance l'activité détail en passant le nom du favoris en paramètre
+    /**
+     * Cette méthode permet de gérer le clic sur la liste des favoris pour retirer un favoris
+     * @param position La position du favoris sur lequel on a cliqué
+     */
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
         this.position = position;
-        if (position > 0) {
-            new AlertDialog.Builder(this)
+        if (position > 0) { //On ne déclenche rien si l'user clique sur le texte "Cliquez sur un résultat pour supprimer la station des favoris"
+            new AlertDialog.Builder(this) //On déclenche une fenêtre pour confirmer l'action
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Voulez-vous vraiment supprimer ce favoris ?")
                     .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
@@ -182,10 +194,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
+                            //On retire le favoris puis on redémarre l'activité pour afficher la liste mise à jour
                             GestionFavoris gestionFav = new GestionFavoris(MainActivity.this);
                             gestionFav.deleteFav(arrayFavoris.get(MainActivity.this.position - 1));
-                            MainActivity.this.recreate(); //On redémarre l'activité pour afficher la mise à jour
-
+                            MainActivity.this.recreate();
                         }
                     })
                     .setNegativeButton("Non", null)
@@ -194,46 +206,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    //Refresh les favoris si la liste à changé dans le cas d'un ajout de favoris
+    /**
+     *Est appelée lorsque l'activité mise en pause a de nouveau le focus
+     *Refresh les favoris si la liste à changé dans le cas d'un ajout de favoris
+     */
     @Override public void onResume() {
         super.onResume();
         GestionFavoris gestionFavoris = new GestionFavoris(this.getApplicationContext());
-        if (arrayFavoris.size() != gestionFavoris.getFav().size()) {
+        if (arrayFavoris.size() != gestionFavoris.getFav().size()) { //Si la liste de favoris a changé
             this.recreate();
         }
     }
-
-    //Classe qui permet d'effectuer la requete GET hors du thread UI
-    /*private class CallAPI extends AsyncTask<String, String, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            String urlString=params[0];
-
-            try {
-                //On fait le GET
-                URL url = new URL(urlString);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                //On récupère le contenu JSON dans un string builder
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line+"\n");
-                }
-                br.close();
-                return sb.toString();
-            } catch (Exception e ) {
-                return e.getMessage();
-            }
-
-        }
-        //On affiche le résultat dans le thread UI
-        protected void onPostExecute(String resultat) {
-            TextView test = (TextView) findViewById(R.id.Test);
-            test.setText(resultat);
-        }
-
-    }*/
 }
