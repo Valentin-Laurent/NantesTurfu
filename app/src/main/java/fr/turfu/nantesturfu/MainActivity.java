@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         else {                    //Sinon :
             element = new HashMap<>();
-            element.put("nom", "Cliquez sur un résultat pour ajouter la station aux favoris");
+            element.put("nom", "Cliquez sur un résultat pour supprimer la station des favoris");
             listeFavoris.add(element);
             for (int j = 0; j < arrayFavoris.size(); j++) {
                 element = new HashMap<>();
