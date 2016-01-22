@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /*Flox
 Nettoyer et commenter code (enlever les classes useless)
@@ -98,10 +99,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     //Cette instruction permet d'attendre que le parser ai fini son execution pour continuer.
                     //Elle est indispensable sinon la méthode onCreate se poursuit sans que nbVélos soit actualisée et le code qui suit devient incohérent
                     try {
-                        parser.get();
+                        parser.get(1500,TimeUnit.MILLISECONDS);
                     }
                     catch (Exception e) {
-                        nbVelos.add("Erreur");
+                        nbVelos.add("Problème de connection à Internet");
                     }
                 }
             }
@@ -209,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /**
      *Est appelée lorsque l'activité mise en pause a de nouveau le focus
      *Refresh les favoris si la liste à changé dans le cas d'un ajout de favoris
+     * Note : visiblement cela ne marche pas, c'est sûrement du au fait que cette activité est lancée en mode SingleTask
      */
     @Override public void onResume() {
         super.onResume();
