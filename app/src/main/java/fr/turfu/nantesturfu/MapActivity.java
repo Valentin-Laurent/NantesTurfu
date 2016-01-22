@@ -57,12 +57,14 @@ public class MapActivity extends AppCompatActivity {
     private Drawable bic3;
     private Drawable bic_full;
     private Drawable bic_empty;
-    private boolean ThereWasNetworkBeforeOnPause ;
 
     /**
      * A l'ouverture de l'activité:
      * On instancie la Mapview
      * On définit ses paramètres
+     * On ajoute l'overlay de la position de l'utilisateur
+     * On actualise la position
+     * On lance le loadmap()
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
