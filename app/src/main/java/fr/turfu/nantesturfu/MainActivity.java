@@ -33,11 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /*Flox
-Licenses etc.
 Nettoyer et commenter code (enlever les classes useless)
 Javadoc
-Affichage des stations hors connection
-Toast pas de connection sur la carte
 
 Si t'as le temps :
 Refresh la map à chaque ajout d'icone
@@ -47,11 +44,9 @@ Rotation
 /*Val
 Nettoyer et commenter code
 Javadoc
-Virer détail activity
 
 Si j'ai le temps :
 Factoriser le code qui gère la toolbar
-Gérer les tasks pour avoir un bouton retour logique quand on commence l'appli par carte
 */
 
 
