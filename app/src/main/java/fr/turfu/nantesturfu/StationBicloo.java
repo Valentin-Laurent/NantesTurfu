@@ -7,11 +7,9 @@ import java.math.BigDecimal;
 
 /**
  * Classe qui contient les informations concernant une station
+ * nom - numero -  adresse - latitude - longitude - nombre total de places - places dispo - places occupées
  */
 public class StationBicloo {
-    /**
-     * nom - numero -  adresse - latitude - longitude - nombre total de places - places dispo - places occupées
-     */
     private String name;
     private int number;
     private String address;
@@ -84,6 +82,11 @@ public class StationBicloo {
     public void setLng(BigDecimal lng) {
         this.lng = lng;
     }
+
+    /**
+     * Renvoie la position *lat et *lng sous forme d'un GeoPoint
+     * @return
+     */
     public GeoPoint getLoc(){
        GeoPoint res= new GeoPoint(lat.doubleValue(),lng.doubleValue());
         return res;

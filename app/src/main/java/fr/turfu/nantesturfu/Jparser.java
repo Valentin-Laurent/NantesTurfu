@@ -2,11 +2,10 @@ package fr.turfu.nantesturfu;
 
 /**
  * Created by FT on 19/01/2016.
- * Le parser est déclenché par Mapactivity et par Favoris Activity
+ * Le parser est déclenché par Mapactivity ou par Favoris Activity
  */
 
     import android.app.Activity;
-    import android.content.Intent;
     import android.os.AsyncTask;
     import java.io.IOException;
     import java.io.InputStream;
@@ -15,8 +14,6 @@ package fr.turfu.nantesturfu;
     import java.net.URL;
     import java.net.URLConnection;
     import java.net.URLEncoder;
-    import java.util.IllegalFormatException;
-
     import javax.json.Json;
     import javax.json.stream.JsonParser;
     import javax.json.stream.JsonParser.Event;
@@ -27,6 +24,13 @@ package fr.turfu.nantesturfu;
         public Jparser(Activity activiteSource){
            this.activiteSource=activiteSource;
         }
+
+        /**
+         * Cette methode prend en entrée une StationBicloo
+         * Elle permet d'executer de façon asynchrone la requete de l'API sans bloquer l'application.
+         * @param params
+         * @return
+         */
         @Override
         protected Void doInBackground(StationBicloo... params) {
             StationBicloo sortie = params[0];
@@ -54,13 +58,6 @@ package fr.turfu.nantesturfu;
             InputStream response = null;
             try {
                 response = connection.getInputStream();
-
-// Cela permet de printer la reponse de la requete pour tester
- /*   BufferedReader in = new BufferedReader(new InputStreamReader(response));
-String line = null;
-while((line = in.readLine()) != null) {
-  System.out.println(line);
-}*/
             JsonParser parser = Json.createParser(new InputStreamReader(response));
             Event event = parser.next(); // START_OBJECT
             event = parser.next();       // KEY_NAME
@@ -75,8 +72,6 @@ while((line = in.readLine()) != null) {
             event = parser.next();  //lat
             event = parser.next();    //long key
             event = parser.next(); // longitude
-            //BigDecimal lng = parser.getBigDecimal();
-            // System.out.println(lng.toString());
             event = parser.next();    //end of position
             event = parser.next();    //banking key
             event = parser.next();    //boolean bank a faire
@@ -98,7 +93,7 @@ while((line = in.readLine()) != null) {
             sortie.setNvelos(parser.getInt());
             parser.close();
 
-            //On test quelle activité à appelé le parser
+            //On test quelle activité a fait l'appel du parser
             if (activiteSource instanceof MapActivity) {
                 ((MapActivity) activiteSource).addicon(sortie);
             }
@@ -114,10 +109,6 @@ while((line = in.readLine()) != null) {
                 }
                 return null;
             }
-        }
-
-        protected void onPostExecute(StationBicloo stat) {
-        // update item layer
         }
     }
 
