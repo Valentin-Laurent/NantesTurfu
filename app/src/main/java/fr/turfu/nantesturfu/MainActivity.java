@@ -2,11 +2,13 @@ package fr.turfu.nantesturfu;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -59,6 +61,8 @@ Gérer les tasks pour avoir un bouton retour logique quand on commence l'appli p
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     public ArrayList<String> nbVelos;
+    private ArrayList<String> arrayFavoris;
+    private int position;
 
 
     @Override
@@ -86,11 +90,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //On récupère les favoris dans une liste :
         GestionFavoris gestionFav = new GestionFavoris(getApplicationContext());
-        gestionFav.clearFav();
-        gestionFav.addFav("PLACE RICORDEAU");
-        gestionFav.addFav("MACHINE DE L'ÎLE - 3 BD LEON BUREAU");
-        gestionFav.addFav("GARE MARITIME - PLACE JACKSONVILLE");
-        ArrayList<String> arrayFavoris = gestionFav.getFav();
+        //gestionFav.addFav("GARE MARITIME - PLACE JACKSONVILLE");
+        arrayFavoris = gestionFav.getFav();
 
         //On récupère la liste des stations de Nantes
         List<StationBicloo> stationsBicloo = null;
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         else {                    //Sinon :
             element = new HashMap<>();
-            element.put("nom", "Cliquez sur un résultat pour afficher le détail");
+            element.put("nom", "Cliquez sur un résultat pour ajouter la station aux favoris");
             listeFavoris.add(element);
             for (int j = 0; j < arrayFavoris.size(); j++) {
                 element = new HashMap<>();
@@ -189,11 +190,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     //Cette méthode lance l'activité détail en passant le nom du favoris en paramètre
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        this.position = position;
         if (position > 0) {
-            Intent intent = new Intent(this, DetailsActivity.class);
-            intent.putExtra("position", position); //On passe l'index du favoris en paramètre
-            startActivity(intent);
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Voulez-vous vraiment supprimer ce favoris ?")
+                    .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            GestionFavoris gestionFav = new GestionFavoris(MainActivity.this);
+                            gestionFav.deleteFav(arrayFavoris.get(MainActivity.this.position - 1));
+                            MainActivity.this.recreate(); //On redémarre l'activité pour afficher la mise à jour
+
+                        }
+                    })
+                    .setNegativeButton("Non", null)
+                    .show();
         }
+
     }
 
     //Classe qui permet d'effectuer la requete GET hors du thread UI
