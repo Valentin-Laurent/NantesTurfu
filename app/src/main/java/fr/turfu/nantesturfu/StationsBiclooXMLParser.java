@@ -1,5 +1,7 @@
-package fr.turfu.nantesturfu; /**
- * Created by Valentin on 13/01/2016.
+package fr.turfu.nantesturfu;
+
+/**
+ * Parseur du fichier XML local où on a stocker toutes les stations Bicloo
  */
 
 import java.io.IOException;
@@ -19,13 +21,14 @@ public class StationsBiclooXMLParser {
     private String text;
 
     public StationsBiclooXMLParser() {
-        stationBicloos = new ArrayList<StationBicloo>();
+        stationBicloos = new ArrayList<>();
     }
 
-    public List<StationBicloo> getstationBicloos() {
-        return stationBicloos;
-    }
-
+    /**
+     * Parse le fichier XML
+     * @param is Le fichier a parser
+     * @return La liste des stations Bicloo
+     */
     public List<StationBicloo> parse(InputStream is) {
         XmlPullParserFactory factory = null;
         XmlPullParser parser = null;
