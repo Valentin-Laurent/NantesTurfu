@@ -1,7 +1,6 @@
 package fr.turfu.nantesturfu;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -39,6 +37,7 @@ import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
@@ -52,62 +51,63 @@ public class MapActivity extends AppCompatActivity {
     private MapView myOpenMapView;
     private MapController myMapController;
     private DefaultResourceProxyImpl defaultResourceProxyImpl;
-    LocationManager locationManager;
-    ArrayList<OverlayItem> overlayItemArray;
-    private Drawable bic ;
-    private Drawable bic3 ;
-    private Drawable bic_full ;
-    private Drawable bic_empty ;
-    //map center
-    IGeoPoint c;
-    GeoPoint center;
+    private LocationManager locationManager;
+    private ArrayList<OverlayItem> overlayItemArray;
+    private Drawable bic;
+    private Drawable bic3;
+    private Drawable bic_full;
+    private Drawable bic_empty;
+    private boolean ThereWasNetworkBeforeOnPause ;
 
-    /** onCreate = A l'ouverture de l'activité. */
+    /**
+     * A l'ouverture de l'activité:
+     * On instancie la Mapview
+     * On définit ses paramètres
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         overridePendingTransition(0, 0); //Permet de ne pas avoir d'animation à l'ouverture de l'activité
-
         //On gère la toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar menu = getSupportActionBar();
         menu.setDisplayShowTitleEnabled(false); //On n'affiche pas le titre de l'appli
         toolbar.setTitle("Carte");//On affiche par contre le titre de l'activité
-        defaultResourceProxyImpl= new DefaultResourceProxyImpl(this);
+        // ==========================//
+
+        defaultResourceProxyImpl = new DefaultResourceProxyImpl(this);
         myOpenMapView = (MapView) findViewById(R.id.openmapview);
         //Activer le zoom et le tactile
         myOpenMapView.setBuiltInZoomControls(true);
         myOpenMapView.setMultiTouchControls(true);
         myMapController = (MapController) myOpenMapView.getController();
         myMapController.setZoom(15);
+
+        //Instancier les drawables des images
         bic = ContextCompat.getDrawable(this, R.drawable.bic);
         bic3 = ContextCompat.getDrawable(this, R.drawable.bic3);
         bic_full = ContextCompat.getDrawable(this, R.drawable.bic_full);
         bic_empty = ContextCompat.getDrawable(this, R.drawable.bic_empty);
-        //--- Create Overlay
-        overlayItemArray = new ArrayList<OverlayItem>();
 
-        // AJOUTER LE POINT BLEU !
+        //--- Créer l' Overlay du point bleu de la position.
+
+        overlayItemArray = new ArrayList<OverlayItem>();
         MyItemizedIconOverlay myItemizedIconOverlay
-                = new MyItemizedIconOverlay(
-                overlayItemArray, null, defaultResourceProxyImpl);
+                = new MyItemizedIconOverlay(overlayItemArray, null, defaultResourceProxyImpl);
         myOpenMapView.getOverlays().add(myItemizedIconOverlay);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        //for demo, getLastKnownLocation from GPS only, not from NETWORK
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
+            // TODO: Demander la permission si pas encore autorisé
             //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
         Location lastLocation
                 = locationManager.getLastKnownLocation(
                 LocationManager.GPS_PROVIDER);
@@ -119,54 +119,72 @@ public class MapActivity extends AppCompatActivity {
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
         myOpenMapView.getOverlays().add(myScaleBarOverlay);
 
-        /**
-         * On récupère la liste des stations avec le Parser xml
-         * On les classe par distance aux centre de l'écran
-         * On appelle l'api bicloo pour chaque station de la liste et
-         * on crée un overlay pour chaque qu'on ajoute a la mapview
-         *
-          */
-
-        //On récupère la liste des stations de Nantes
-        List<StationBicloo> stationsBicloo = null;
-        try {
-            StationsBiclooXMLParser parser = new StationsBiclooXMLParser();
-            stationsBicloo = parser.parse(getAssets().open("stationsBicloo.xml"));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // Avant d'afficher on trie les stations par proximité au centre de l'ecran = position de l'utilisateur:
-        c = myOpenMapView.getMapCenter();
-
-        // tri auto avec le critere customComparator defini plus bas:
-        Collections.sort(stationsBicloo, new customComparator());
-
-
-        if (!isNetworkAvailable()){
-            Toast.makeText(this, "Votre connexion internet est desactivée", Toast.LENGTH_SHORT).show();
-            for (StationBicloo s: stationsBicloo){
-                addicon(s);
-            }
-        }
-        else {
-            //On affiche toutes les stations sur la map:
-            for (StationBicloo s : stationsBicloo) {
-                Jparser parser = new Jparser(this);
-                // le parser appelle la fonction addi sur s :
-                parser.execute(s);
-            }
-        }
+        // LOAD MAP
+        loadmap();
     }
 
  /* ================================================= END ONCREATE ===================================== */
 
+    private void clearmap(){
+        if(!myOpenMapView.getOverlays().isEmpty())
+        {
+            for (Overlay eachOverlay: myOpenMapView.getOverlays()){
+                if (eachOverlay instanceof ItemizedOverlayWithFocus) {
+                    myOpenMapView.getOverlays().remove(eachOverlay);
+                }
+            }
 
+        }
+    }
+    /** FONCTION DE CHARGEMENT DE LA MAP, lancement au demarrage et onResume()
+     * On récupère la liste des stations avec le Parser xml
+     * On les classe par distance aux centre de l'écran
+     * On appelle l'api bicloo pour chaque station de la liste et
+     * on crée un overlay pour chaque qu'on ajoute a la mapview
+     */
+    private void loadmap(){
+    //On récupère la liste des stations de Nantes
+    List<StationBicloo> stationsBicloo = null;
+    try
+
+    {
+        StationsBiclooXMLParser parser = new StationsBiclooXMLParser();
+        stationsBicloo = parser.parse(getAssets().open("stationsBicloo.xml"));
+
+    }
+
+    catch(
+    IOException e
+    )
+
+    {
+        e.printStackTrace();
+    }
+    // Avant d'afficher on trie les stations par proximité au centre de l'ecran = position de l'utilisateur:
+    // tri auto avec le critere customComparator defini plus bas:
+    Collections.sort(stationsBicloo,new customComparator());
+
+    //On affiche toutes les stations sur la map:
+    for (StationBicloo s : stationsBicloo) {
+        if (isNetworkAvailable()) {
+            Jparser parser = new Jparser(this);
+            // le parser appelle la fonction addi sur s :
+            parser.execute(s);
+        }
+        else { addicon(s); }
+    }
+
+}
+
+    /**
+     * Attention, le OnResume arrive potentiellement avant le retour de "isConnected" donc isNetWorkAvailable est encore faux.
+     * @return
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 
     /**
@@ -183,7 +201,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     /**
-     *FONCTION POUR AJOUTER UN ITEM A LA MAP A PARTIR D UNE STATION
+     *Ajouter un item a la map a partir d'un element StationBicloo.
      * @param s // station bicloo
      */
     public void addicon(StationBicloo s){
@@ -239,9 +257,20 @@ public class MapActivity extends AppCompatActivity {
         myOpenMapView.getOverlays().add(mOverlay);
     }
 
+    /**
+     * Le isNetworkAvailable ne marche pas. cf doc IsNetworkAvailable.
+     */
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
+     //   if (isNetworkAvailable()){
+            clearmap();
+            loadmap();
+     //   }
+        //On signale a l'utilisateur que sa connexion est désactiveé.
+        if (!isNetworkAvailable()){
+            Toast.makeText(this, "Votre connexion internet est desactivée", Toast.LENGTH_SHORT).show();
+        }
+
         super.onResume();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -369,6 +398,10 @@ public class MapActivity extends AppCompatActivity {
 
     };
 
+    /**
+     * Overlay de la position de l'utilisateur
+     * Est instancié OnCreate, et appelle les fonctions ci-dessous.
+     */
     private class MyItemizedIconOverlay extends ItemizedIconOverlay<OverlayItem>{
 
         public MyItemizedIconOverlay(
@@ -379,19 +412,16 @@ public class MapActivity extends AppCompatActivity {
             // TODO Auto-generated constructor stub
         }
 
+// Dessiner le point, appelé par le constructuer de myitemizedoverlay
         @Override
         public void draw(Canvas canvas, MapView mapview, boolean arg2) {
             // TODO Auto-generated method stub
             super.draw(canvas, mapview, arg2);
 
             if(!overlayItemArray.isEmpty()){
-
-                //overlayItemArray have only ONE element only, so I hard code to get(0)
                 GeoPoint in = (GeoPoint) overlayItemArray.get(0).getPoint();
-
                 Point out = new Point();
                 mapview.getProjection().toPixels(in, out);
-
                 Bitmap bm = BitmapFactory.decodeResource(getResources(),
                         R.drawable.mylocation);
                 canvas.drawBitmap(bm,
@@ -399,13 +429,6 @@ public class MapActivity extends AppCompatActivity {
                         out.y - bm.getHeight()/2,  //shift the bitmap center
                         null);
             }
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent event, MapView mapView) {
-            // TODO Auto-generated method stub
-            //return super.onSingleTapUp(event, mapView);
-            return true;
         }
     }
 }
