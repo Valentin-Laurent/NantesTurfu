@@ -2,8 +2,10 @@ package fr.turfu.nantesturfu;
 
 import android.app.ListActivity;
 import android.app.SearchManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResultatRechercheActivity extends ListActivity {
-
+    private int position;
     private String recherche; //La chaine de caractère qui contiendra ce que l'utilisateur à recherché.
+    private ArrayList<String> arrayResultat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,8 @@ public class ResultatRechercheActivity extends ListActivity {
 
         //On cherche les stations qui contiennent le mot recherché
         ArrayList<StationBicloo> resultatRecherche = new ArrayList<>(); //La liste qui va contenir les résultats sous la forme d'objets StationBicloo
-        ArrayList<String> arrayResultat = new ArrayList<>();            //La liste qui va contenir les adresse de ces stations
-        arrayResultat.add("Cliquez sur un résultat pour afficher le détail");
+        arrayResultat = new ArrayList<>();            //La liste qui va contenir les adresse de ces stations
+        arrayResultat.add("Cliquez sur un résultat pour ajouter aux favoris");
 
         for (StationBicloo s : stationsBicloo) {
             if (s.getName().toLowerCase().contains(recherche.toLowerCase()))  { //On recherche dans les noms
@@ -55,10 +58,9 @@ public class ResultatRechercheActivity extends ListActivity {
             }
         }
 
-        int taille = arrayResultat.size();
-
-        if (taille==0) {
-            arrayResultat.clear(); //On enlève le texte "Cliquez sur un résultat pour afficher le détail"
+        //Si on n'a pas de résultats
+        if (arrayResultat.size()==1) {
+            arrayResultat.clear(); //On enlève le texte "Cliquez sur un résultat pour ajouter aux favoris"
             arrayResultat.add("Il n'y a pas de station correspondant à votre recherche.");
         }
 
@@ -70,12 +72,23 @@ public class ResultatRechercheActivity extends ListActivity {
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-        ListView myListView = getListView();
-        if (position != 0) { //On ne lance pas l'activité pour le premier item de la liste car il correspond au texte "Cliquez sur un résultat pour afficher le détail"
-            Intent intent = new Intent(this, DetailsActivity.class);
-            startActivity(intent);
+        this.position = position;
+        if (position > 0) {
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Voulez-vous vraiment ajouter cette station aux favoris ?")
+                    .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            GestionFavoris gestionFav = new GestionFavoris(ResultatRechercheActivity.this);
+                            gestionFav.addFav(arrayResultat.get(ResultatRechercheActivity.this.position));
+                        }
+                    })
+                    .setNegativeButton("Non", null)
+                    .show();
         }
-        //String itemClicked = (String) myListView.getAdapter().getItem(position);
     }
     //Code recopié (la classe ListActivity gère très mal les toolbars, c'est une solution "bricolage", qui utilise une autre toolbar : "toolbar_simplifiee")
     @Override

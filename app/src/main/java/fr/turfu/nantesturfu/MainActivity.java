@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //On récupère les favoris dans une liste :
         GestionFavoris gestionFav = new GestionFavoris(getApplicationContext());
-        //gestionFav.addFav("GARE MARITIME - PLACE JACKSONVILLE");
         arrayFavoris = gestionFav.getFav();
 
         //On récupère la liste des stations de Nantes
@@ -111,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     parser.execute(s); //Le parser modifie la liste les horaires qui sont public
                     try {
                         parser.get();
+                        String boucle = "ok";
                     }
                     catch (Exception e) {
                         nbVelos.add("Erreur");
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             element.put("nom", "Vous n'avez pas de favoris");
             listeFavoris.add(element);
         }
-        else {                    //Sinon :
+        else if (arrayFavoris.size()> 0) {                    //Sinon :
             element = new HashMap<>();
             element.put("nom", "Cliquez sur un résultat pour supprimer la station des favoris");
             listeFavoris.add(element);
@@ -210,6 +210,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     .show();
         }
 
+    }
+
+    //Refresh les favoris si la liste à changé dans le cas d'un ajout de favoris
+    @Override public void onResume() {
+        super.onResume();
+        GestionFavoris gestionFavoris = new GestionFavoris(this.getApplicationContext());
+        if (arrayFavoris.size() != gestionFavoris.getFav().size()) {
+            this.recreate();
+        }
     }
 
     //Classe qui permet d'effectuer la requete GET hors du thread UI
