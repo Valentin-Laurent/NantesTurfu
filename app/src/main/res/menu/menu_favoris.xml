@@ -15,7 +15,7 @@
         app:showAsAction="collapseActionView"/>
 
     <item
-        android:id="@+id/préférences"
+        android:id="@+id/preferences"
         android:title="@string/bouttonPref"
         app:showAsAction="collapseActionView"/>
 

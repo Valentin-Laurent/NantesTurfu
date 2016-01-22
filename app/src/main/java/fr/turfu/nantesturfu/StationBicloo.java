@@ -6,10 +6,12 @@ import java.math.BigDecimal;
 
 
 /**
- * Created by Valentin on 13/01/2016.
+ * Classe qui contient les informations concernant une station
  */
 public class StationBicloo {
-
+    /**
+     * nom - numero -  adresse - latitude - longitude - nombre total de places - places dispo - places occupées
+     */
     private String name;
     private int number;
     private String address;

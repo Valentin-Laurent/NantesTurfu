@@ -26,7 +26,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.widget.Toast;
 
 import org.osmdroid.DefaultResourceProxyImpl;
@@ -193,7 +192,7 @@ public class MapActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.préférences:
+            case R.id.preferences:
                 Intent intent = new Intent(this, ReglagesActivity.class);
                 startActivity(intent);
                 return true;
