@@ -57,12 +57,14 @@ public class MapActivity extends AppCompatActivity {
     private Drawable bic3;
     private Drawable bic_full;
     private Drawable bic_empty;
-    private boolean ThereWasNetworkBeforeOnPause ;
 
     /**
      * A l'ouverture de l'activité:
      * On instancie la Mapview
      * On définit ses paramètres
+     * On ajoute l'overlay de la position de l'utilisateur
+     * On actualise la position
+     * On lance le loadmap() dans onresume(). cf schema de cycle d'activité android
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +79,7 @@ public class MapActivity extends AppCompatActivity {
         toolbar.setTitle("Carte");//On affiche par contre le titre de l'activité
         // ==========================//
 
-        defaultResourceProxyImpl = new DefaultResourceProxyImpl(this);
+        defaultResourceProxyImpl = new DefaultResourceProxyImpl(this); // sert à gerer les contenus de la mapview.
         myOpenMapView = (MapView) findViewById(R.id.openmapview);
         //Activer le zoom et le tactile
         myOpenMapView.setBuiltInZoomControls(true);
@@ -92,7 +94,6 @@ public class MapActivity extends AppCompatActivity {
         bic_empty = ContextCompat.getDrawable(this, R.drawable.bic_empty);
 
         //--- Créer l' Overlay du point bleu de la position.
-
         overlayItemArray = new ArrayList<OverlayItem>();
         MyItemizedIconOverlay myItemizedIconOverlay
                 = new MyItemizedIconOverlay(overlayItemArray, null, defaultResourceProxyImpl);
@@ -118,144 +119,9 @@ public class MapActivity extends AppCompatActivity {
         //Add Scale Bar
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(this);
         myOpenMapView.getOverlays().add(myScaleBarOverlay);
-
-        // LOAD MAP
-        loadmap();
     }
 
  /* ================================================= END ONCREATE ===================================== */
-
-    private void clearmap(){
-        if(!myOpenMapView.getOverlays().isEmpty())
-        {
-            for (Overlay eachOverlay: myOpenMapView.getOverlays()){
-                if (eachOverlay instanceof ItemizedOverlayWithFocus) {
-                    myOpenMapView.getOverlays().remove(eachOverlay);
-                }
-            }
-
-        }
-    }
-    /** FONCTION DE CHARGEMENT DE LA MAP, lancement au demarrage et onResume()
-     * On récupère la liste des stations avec le Parser xml
-     * On les classe par distance aux centre de l'écran
-     * On appelle l'api bicloo pour chaque station de la liste et
-     * on crée un overlay pour chaque qu'on ajoute a la mapview
-     */
-    private void loadmap(){
-    //On récupère la liste des stations de Nantes
-    List<StationBicloo> stationsBicloo = null;
-    try
-
-    {
-        StationsBiclooXMLParser parser = new StationsBiclooXMLParser();
-        stationsBicloo = parser.parse(getAssets().open("stationsBicloo.xml"));
-
-    }
-
-    catch(
-    IOException e
-    )
-
-    {
-        e.printStackTrace();
-    }
-    // Avant d'afficher on trie les stations par proximité au centre de l'ecran = position de l'utilisateur:
-    // tri auto avec le critere customComparator defini plus bas:
-    Collections.sort(stationsBicloo,new customComparator());
-
-    //On affiche toutes les stations sur la map:
-    for (StationBicloo s : stationsBicloo) {
-        if (isNetworkAvailable()) {
-            Jparser parser = new Jparser(this);
-            // le parser appelle la fonction addi sur s :
-            parser.execute(s);
-        }
-        else { addicon(s); }
-    }
-
-}
-
-    /**
-     * Attention, le OnResume arrive potentiellement avant le retour de "isConnected" donc isNetWorkAvailable est encore faux.
-     * @return
-     */
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-    }
-
-    /**
-    * Comparateur utilisé pour le calcul des stations les plus proches :
-    */
-    public class customComparator implements Comparator<StationBicloo> {
-        IGeoPoint cen = overlayItemArray.get(0).getPoint();
-        @Override
-        public int compare(StationBicloo s1, StationBicloo s2) {
-            int d1=s1.getLoc().distanceTo(cen);
-            int d2=s2.getLoc().distanceTo(cen);
-            return d1-d2;
-        }
-    }
-
-    /**
-     *Ajouter un item a la map a partir d'un element StationBicloo.
-     * @param s // station bicloo
-     */
-    public void addicon(StationBicloo s){
-        // Choix de l'image de l'icone
-        Drawable icon;
-        if (s.getNvelos()==0){
-            icon=bic_empty;
-        }
-        else if(s.getNvide()==0){
-            icon=bic_full;
-        }
-        else if(s.getNvelos()<4){
-            icon=bic3;
-        }
-        else {
-            icon=bic;
-        }
-        // fond du rectangle de texte au dessus des icones:
-        int or = Color.rgb(255, 160, 0);
-        // text icon:
-        String aff;
-        if (s.getNtot()>0) {
-            aff = Integer.toString(s.getNvelos()) + " / " + Integer.toString(s.getNtot());
-        }
-        else{ aff = "Veuillez activer internet et relancer la carte...";}
-        String nome = s.getName();
-        double lat = s.getLat().doubleValue();
-        double lng = s.getLng().doubleValue();
-        GeoPoint gpt = new GeoPoint(lat, lng);
-        OverlayItem oi = new OverlayItem(nome, aff, gpt);
-        oi.setMarker(icon);
-        ArrayList<OverlayItem> liste = new ArrayList<>();
-        liste.add(oi);
-        // On crée un overlay pour chaque item (= icone), afin de tous les activer en meme temps, pour afficher le rectangle au dessus des items.
-
-        //creation overlay
-        ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(liste, icon, icon, or,
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        //do something
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        return false;
-                    }
-                }, defaultResourceProxyImpl);
-        // sert a activer desactiver au click lorsqu'on a plusieurs items dans un overlay
-        mOverlay.setFocusItemsOnTap(true);
-        //mOverlay.setFocusedItem(0);
-        myOpenMapView.getOverlays().add(mOverlay);
-    }
 
     /**
      * Le isNetworkAvailable ne marche pas. cf doc IsNetworkAvailable.
@@ -343,6 +209,156 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+// ============================ CI DESSUS SONT LES FONCTIONS DU CYCLE DACTIVITE (ONCREATE ON RESUME ETC°=====================
+
+
+
+// ============================ CI DESSOUS SE TROUVENT LES FONCTIONS UTILISEES =====================
+// ============================ PAR LES DIFFERENTES ETAPES DU CYCLE D'ACTIVITE======================
+    /**
+     * SUpprime tous les icones de la map. Afin d'actualiser. N'est sans doute pas la meilleure solution.
+     * En effet il y a un probleme de synchronisation avec les resultats du parser qui arrivent apres le clearmap()
+     * Appelé par OnResume().
+     */
+    private void clearmap(){
+        if(!myOpenMapView.getOverlays().isEmpty())
+        {
+            for (Overlay eachOverlay: myOpenMapView.getOverlays()){
+                if (eachOverlay instanceof ItemizedOverlayWithFocus) {
+                    myOpenMapView.getOverlays().remove(eachOverlay);
+                }
+            }
+
+        }
+    }
+
+    /** FONCTION DE CHARGEMENT DE LA MAP, lancement au demarrage et onResume()
+     * On récupère la liste des stations avec le Parser xml
+     * On les classe par distance aux centre de l'écran
+     * On appelle l'api bicloo pour chaque station de la liste et
+     * on crée un overlay pour chaque qu'on ajoute a la mapview
+     */
+    private void loadmap(){
+
+        //On récupère la liste des stations de Nantes
+        List<StationBicloo> stationsBicloo = null;
+        try
+        {
+            StationsBiclooXMLParser parser = new StationsBiclooXMLParser();
+            stationsBicloo = parser.parse(getAssets().open("stationsBicloo.xml"));
+        }
+        catch( IOException e )
+        {
+            e.printStackTrace();
+        }
+
+        // Avant d'afficher on trie les stations par proximité au centre de l'ecran = position de l'utilisateur:
+        // tri auto avec le critere customComparator defini plus bas:
+        Collections.sort(stationsBicloo, new customComparator());
+
+        //On affiche toutes les stations sur la map:
+        for (StationBicloo s : stationsBicloo) {
+            if (isNetworkAvailable()) {
+                Jparser parser = new Jparser(this);
+                // le parser appelle la fonction addi sur s :
+                parser.execute(s);
+            }
+            else { addicon(s); }
+        }
+
+    }
+
+    /**
+     * Attention, le OnResume arrive potentiellement avant le retour de "isConnected" donc isNetWorkAvailable est encore faux.
+     * @return
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    /**
+     * Comparateur utilisé pour le calcul des stations les plus proches :
+     */
+    public class customComparator implements Comparator<StationBicloo> {
+        IGeoPoint cen = overlayItemArray.get(0).getPoint();
+        @Override
+        public int compare(StationBicloo s1, StationBicloo s2) {
+            int d1=s1.getLoc().distanceTo(cen);
+            int d2=s2.getLoc().distanceTo(cen);
+            return d1-d2;
+        }
+    }
+
+    /**
+     *Ajouter un item a la map a partir d'un element StationBicloo.
+     * @param s // station bicloo
+     */
+    public void addicon(StationBicloo s){
+        // Choix de l'image de l'icone
+        Drawable icon;
+        if (s.getNvelos()==0){
+            icon=bic_empty;
+        }
+        else if(s.getNvide()==0){
+            icon=bic_full;
+        }
+        else if(s.getNvelos()<4){
+            icon=bic3;
+        }
+        else {
+            icon=bic;
+        }
+        // fond du rectangle de texte au dessus des icones:
+        int or = Color.rgb(255, 160, 0);
+        // text icon:
+        String aff;
+        //Dans le cas ou le Parser a fonctionné (grosso modo quand on a du reseau),
+        // le nombre de place total d'une station bicloo Ntot est toujours > 0.
+        if (s.getNtot()>0) {
+            aff = Integer.toString(s.getNvelos()) + " / " + Integer.toString(s.getNtot());
+        }
+        // Le cas ou on a pas de reseau (ou que le parser n'a rien renvoyé pour une autre raison)
+        else{ aff = "Veuillez activer internet et relancer la carte...";}
+        String nome = s.getName();
+        double lat = s.getLat().doubleValue();
+        double lng = s.getLng().doubleValue();
+        GeoPoint gpt = new GeoPoint(lat, lng);
+        // aff et nome sont les 2 lignes de textes affichées lorsqu'on click sur une station
+        OverlayItem oi = new OverlayItem(aff, nome, gpt);
+        // on attribue le marker defini en debut de methode.
+        oi.setMarker(icon);
+        ArrayList<OverlayItem> liste = new ArrayList<>();
+        liste.add(oi);
+        // On crée un overlay pour chaque item (= icone), afin de pouvoir tous les activer en meme temps,
+        // et d'afficher le texte au dessus des items.
+
+        //creation overlay
+        ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(liste, icon, icon, or,
+                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                        //do something
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onItemLongPress(final int index, final OverlayItem item) {
+                        return false;
+                    }
+                }, defaultResourceProxyImpl);
+        // sert a activer desactiver au click lorsqu'on a plusieurs items dans un overlay
+        mOverlay.setFocusItemsOnTap(true);
+        //mOverlay.setFocusedItem(0);
+        myOpenMapView.getOverlays().add(mOverlay);
+    }
+
+    /**
+     * Mise à jour de la position de l'utlisateur
+     * @param loc
+     */
     private void updateLoc(Location loc){
         GeoPoint locGeoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
         setOverlayLoc(loc);
@@ -362,13 +378,15 @@ public class MapActivity extends AppCompatActivity {
         GeoPoint overlocGeoPoint = new GeoPoint(overlayloc);
         //---
         overlayItemArray.clear();
-
         OverlayItem newMyLocationItem = new OverlayItem(
                 "My Location", "My Location", overlocGeoPoint);
         overlayItemArray.add(newMyLocationItem);
         //---
     }
 
+    /**
+     * à faire pour perfectionner la gestion d'evenements reseau.
+     */
     private LocationListener myLocationListener
             = new LocationListener(){
 
@@ -377,25 +395,18 @@ public class MapActivity extends AppCompatActivity {
             // TODO Auto-generated method stub
             updateLoc(location);
         }
-
         @Override
         public void onProviderDisabled(String provider) {
             // TODO Auto-generated method stub
-
         }
-
         @Override
         public void onProviderEnabled(String provider) {
             // TODO Auto-generated method stub
-
         }
-
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             // TODO Auto-generated method stub
-
         }
-
     };
 
     /**
