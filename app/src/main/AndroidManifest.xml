@@ -55,7 +55,6 @@
             android:name=".MapActivity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".DetailsActivity"></activity>
     </application>
 
 </manifest>
