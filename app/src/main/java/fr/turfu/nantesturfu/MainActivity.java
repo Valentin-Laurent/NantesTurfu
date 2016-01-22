@@ -47,13 +47,9 @@ Rotation
 /*Val
 Nettoyer et commenter code
 Javadoc
-Virer détail acitivity
-Recherche avec le détail
-Un appui sur recherche ajoute au favoris
-Un appui sur favoris retire des favoris
+Virer détail activity
 
 Si j'ai le temps :
-Menu de confirmation pour les les ajouts/retraitde favoris
 Factoriser le code qui gère la toolbar
 Gérer les tasks pour avoir un bouton retour logique quand on commence l'appli par carte
 */
