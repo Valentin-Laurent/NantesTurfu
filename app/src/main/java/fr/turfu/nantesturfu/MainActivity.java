@@ -66,15 +66,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         nbVelos = new ArrayList<>();
 
-        //On lance l'activité map à la place de celle-ci suivant les préférences de l'utilisateur
-        String p = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("Menu par défaut", "0");
-        Intent intent = getIntent();
-        if ((p.equals("1"))&&(true)) {
-            Intent intent2 = new Intent(this, MapActivity.class);
-            startActivity(intent2);
-            //this.finish(); //On arrête cette activité (évite notamment un comportement étrange pour l'utilisateur si il appuie sur retour)
-        }
-
         setContentView(R.layout.activity_main);
 
         //On gère la toolbar
