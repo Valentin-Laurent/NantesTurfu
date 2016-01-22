@@ -1,10 +1,5 @@
 package fr.turfu.nantesturfu;
 
-/**
- * Created by FT on 19/01/2016.
- * Le parser est déclenché par Mapactivity ou par Favoris Activity
- */
-
     import android.app.Activity;
     import android.os.AsyncTask;
     import java.io.IOException;
@@ -18,7 +13,10 @@ package fr.turfu.nantesturfu;
     import javax.json.stream.JsonParser;
     import javax.json.stream.JsonParser.Event;
 
-
+/**
+ * Le parser gere les requetes de l'API Bicloo
+ * Le parser est déclenché par Mapactivity ou par Favoris Activity
+ */
     public class Jparser extends AsyncTask<StationBicloo, Void, Void> {
         Activity activiteSource;
         public Jparser(Activity activiteSource){

@@ -45,6 +45,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+/**
+ * Classe qui gere l'activite carte avec l'affichage des icones.
+ */
 public class MapActivity extends AppCompatActivity {
 
     private MapView myOpenMapView;
@@ -123,6 +127,7 @@ public class MapActivity extends AppCompatActivity {
  /* ================================================= END ONCREATE ===================================== */
 
     /**
+     * Le onresume() est declenché a chaque fois qu'on relance la map.
      * Le isNetworkAvailable ne marche pas. cf doc IsNetworkAvailable.
      */
     @Override
@@ -151,9 +156,11 @@ public class MapActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
     }
 
+    /**
+     * Lorsqu'on lance une autre activité sans arreter la map
+     */
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
         super.onPause();
 
         overridePendingTransition(0, 0); //Permet de ne pas avoir d'animation à la fermeture de l'activité
