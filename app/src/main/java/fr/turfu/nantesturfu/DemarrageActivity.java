@@ -5,7 +5,9 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-//Classe qui sert à choisir quelle activité on lance au démarrage
+/**
+ * Classe qui sert à choisir quelle activité on lance au démarrage
+ */
 public class DemarrageActivity extends AppCompatActivity {
 
     @Override
